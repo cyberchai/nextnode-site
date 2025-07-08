@@ -1,0 +1,46 @@
+---
+import Layout from '../layouts/BaseLayout.astro';
+---
+<!-- Copilot is super cool. Ctrl+I -->
+
+<Layout>
+  <section style="padding:6rem 2rem;text-align:center;">
+    <h1 class="hero-text">Ideas Don’t Wait.<br />Neither Should Your Product.</h1>
+    <p style="max-width:600px;margin:2rem auto;font-size:1.1rem;color:#444;">
+      NextNode helps founders and organizations turn their ideas into powerful, scalable digital products.
+    </p>
+    <a href="/consultation" class="cta-btn">Get a Free Consultation</a>
+  </section>
+
+  <style>
+    .hero-text {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      line-height: 1.2;
+      background: linear-gradient(90deg, #ea2480, #e3da30);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      transition: background 0.4s ease;
+    }
+
+    /* .hero-text:hover {
+      background: linear-gradient(90deg, #9b7bff, #52d8a0);
+    } */
+
+    .cta-btn {
+      display: inline-block;
+      background: linear-gradient(90deg, #ea2480, #e3da30);
+      padding: 1rem 2rem;
+      color: white;
+	  font-weight: 800;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: transform 0.2s, background 0.4s;
+    }
+
+    .cta-btn:hover {
+      transform: scale(1.05);
+      background: linear-gradient(90deg, #ea2480, #e3da30);
+    }
+  </style>
+</Layout>
