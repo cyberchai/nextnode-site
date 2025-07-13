@@ -1,0 +1,136 @@
+---
+import { Container } from '@components/odyssey-theme';
+import Layout from './Page.astro'; 
+import { generateTagData } from '../utils/helpers';
+
+const {
+  content: {
+    title,
+    description,
+    completedDate,
+    canonicalURL,
+    featuredImage,
+    tags,
+    company,
+    services
+  }
+} = Astro.props;
+
+let allTagsData = [];
+
+if (tags && tags.length > 0) {
+  allTagsData = generateTagData(tags);
+}
+
+const seo = {
+  title,
+  description,
+  publishDate: completedDate, // still valid for SEO
+  canonicalURL,
+  image: featuredImage,
+};
+---
+
+<Layout seo={seo}> 
+  <div class="project-header__container"> 
+    <ul class="project-tags__list">
+      {allTagsData.map(tag => (
+        <li class="project-tags__tag">
+          <a href={`/projects/tags/${tag.slug}`}>
+            {tag.title}
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <h1>{title}</h1>
+
+    {company && (
+      <p class="project-company"><strong>Client:</strong> {company}</p>
+    )}
+
+    {completedDate && (
+      <p class="project-date">
+        <time><em>Completed {completedDate}</em></time>
+      </p>
+    )}
+
+    {featuredImage && (
+      <img class="project-layout__img" src={featuredImage} alt={title} />
+    )}
+
+    {services && (
+      <div class="project-services">
+        <strong>Services Provided:</strong>
+        <ul>
+          {services.map(service => <li>{service}</li>)}
+        </ul>
+      </div>
+    )}
+  </div>
+
+  <Container narrow>  
+    <article id="article">
+      <slot></slot>
+    </article>
+  </Container>
+</Layout>
+
+<style>
+  #article {
+    padding-bottom: 3rem;
+  }
+
+  .project-header__container {
+    max-width: var(--theme-blog-post-header-width);
+    margin: 1rem auto;
+    padding: var(--container-padding);
+  }
+
+  .project-tags__list {
+    margin: 1rem auto;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .project-tags__tag {
+    text-transform: uppercase;
+  }
+
+  .project-tags__tag a {
+    font-size: var(--font-size-sm);
+    text-decoration: none;
+  }
+
+  .project-company {
+    font-size: 1rem;
+    margin-top: 0.5rem;
+    opacity: 0.85;
+  }
+
+  .project-date {
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    opacity: 0.7;
+  }
+
+  .project-layout__img {
+    margin: 1rem 0;
+    border-radius: var(--theme-shape-radius);
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+  }
+
+  .project-services {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+  }
+
+  .project-services ul {
+    margin: 0.25rem 0 1rem;
+    padding-left: 1rem;
+  }
+</style>

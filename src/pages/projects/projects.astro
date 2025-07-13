@@ -1,0 +1,103 @@
+---
+import { Container, Button, TextCardSection } from '@components/odyssey-theme';
+import Layout from '../../layouts/Page.astro';
+import { Icon } from 'astro-icon/components';
+import ProjectCard from '../../components/cards/ProjectCard.astro';
+
+const posts = await Astro.glob('./project-posts/*.mdx').then((projects) =>
+  projects.map(({ frontmatter, url }) => ({
+    title: frontmatter.title,
+    description: frontmatter.description,
+    company: frontmatter.company,
+    completedDate: frontmatter.completedDate,
+    featuredImage: frontmatter.featuredImage,
+    services: frontmatter.services,
+    tags: frontmatter.tags,
+    href: url,
+  }))
+);
+
+// Utility: group array into chunks of 2
+function chunk(arr, size) {
+  return Array.from({ length: Math.ceil(arr.length / size) }, (_, i) =>
+    arr.slice(i * size, i * size + size)
+  );
+}
+
+const chunkedProjects = chunk(posts, 2);
+
+const seo = {
+  title: 'Projects by NextNode',
+  description: 'Browse projects built by NextNode for mission-driven teams, startups, and creators.',
+};
+---
+
+<Layout {seo}>
+  <Container>
+    <section class="projects-list__section">
+      <h2>Development, Design, and Marketing Work</h2>
+      <div class="projects-grid">
+		{posts.map((project) => (
+			<ProjectCard {...project} />
+		))}
+	  </div>
+    </section>
+
+    <TextCardSection>
+      <h1>Book a free consultation</h1>
+      <p>Have an idea? Let’s talk about it.</p>
+      <div class="cta-buttons__container">
+        <Button
+          href="/consultation"
+          outlined
+          customIcon
+        >
+          Book Now
+          <Fragment slot="icon">
+            <Icon name="ic:baseline-launch" />
+          </Fragment>
+        </Button>
+      </div>
+    </TextCardSection>
+  </Container>
+</Layout>
+
+<style>
+.projects-list__section {
+  margin: var(--section-margin) auto;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+@media (max-width: 768px) {
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.project-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  justify-content: space-between;
+}
+
+.project-row > * {
+  flex: 0 1 calc(50% - 1rem);
+  max-width: calc(50% - 1rem);
+}
+
+/* @media (max-width: 768px) {
+  .project-row > * {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+} */
+</style>

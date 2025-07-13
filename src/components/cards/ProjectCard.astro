@@ -1,0 +1,76 @@
+---
+const { title, company, description, featuredImage, services, tags } = Astro.props;
+---
+
+<div class="project-card">
+  <img src={featuredImage} alt={title} />
+  <h3>{title}</h3>
+  <p class="company">{company}</p>
+  <p class="desc">{description}</p>
+  <ul class="services">
+    {services?.map(service => <li>{service}</li>)}
+  </ul>
+  <div class="tags">
+    {tags?.map(tag => <span class="tag">{tag}</span>)}
+  </div>
+</div>
+
+<style>
+  /* .project-card {
+    background: var(--theme-surface-1);
+    border-radius: var(--theme-shape-radius);
+    padding: 1.5rem;
+    box-shadow: var(--theme-elevation-low);
+  } */
+  .project-card {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 1.5rem;
+  background: var(--theme-surface-1);
+  border-radius: var(--theme-shape-radius);
+  box-shadow: var(--theme-elevation-low);
+}
+
+
+
+  /* img {
+    width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+  } */
+
+  .project-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .company {
+    font-weight: 600;
+    color: var(--theme-accent-color);
+    margin-bottom: 0.25rem;
+  }
+  .desc {
+    margin: 0.5rem 0 1rem;
+  }
+  .services {
+    font-size: 0.875rem;
+    margin: 0;
+    padding-left: 1rem;
+  }
+  .tags {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .tag {
+    background: var(--theme-surface-2);
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+  }
+</style>

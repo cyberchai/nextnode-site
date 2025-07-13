@@ -1,0 +1,170 @@
+---
+import Layout from '../../layouts/Page.astro';
+import { Container } from '@components/odyssey-theme';
+
+const seo = {
+  title: 'Project Cost Estimator | NextNode',
+  description: 'Get a rough estimate for your web, mobile, or custom project based on your needs.',
+};
+
+function calculateEstimate({ size, platform, builtFromScratch, maintenance }) {
+  let base = 0;
+
+  switch (size) {
+    case 'small': base = 1000; break;
+    case 'medium': base = 3000; break;
+    case 'large': base = 6000; break;
+  }
+
+  if (platform === 'app') base += 2000;
+  else if (platform === 'other') base += 1000;
+
+  if (builtFromScratch) base += 1500;
+  if (maintenance) base += 500;
+
+  return base;
+}
+---
+
+<Layout {seo}>
+  <Container>
+    <section class="calculator">
+      <h1>Project Cost Estimator</h1>
+      <p>
+        Use the options below to get a rough estimate for your project.<br>
+        If you're unsure about any selections, that's completely fine, this is just a starting point!<br><br>
+        We believe in equitable access to good design and development, and may be open to thoughtful conversation when cost is a barrier.
+    </p>
+
+        <br>
+
+      <form id="cost-form">
+        <div class="field">
+          <label for="size"><b>What is the size of your project?</b></label>
+          <select id="size" class="styled-input">
+            <option value="small">Small (e.g., personal portfolio, landing page)</option>
+            <option value="medium">Medium (e.g., e-commerce/marketing site or MVP app)</option>
+            <option value="large">Large (e.g., multi-user platform or SaaS)</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="platform"><b>What type of project is it?</b></label>
+          <select id="platform" class="styled-input">
+            <option value="website">Website</option>
+            <option value="app">App</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="field checkbox">
+          <label>
+            <input type="checkbox" id="builtFromScratch" />
+            <b>Develop from scratch (not using Wix/WordPress/etc)</b>
+          </label>
+        </div>
+
+        <div class="field checkbox">
+          <label>
+            <input type="checkbox" id="maintenance" />
+            <b>Include post-launch maintenance</b>
+          </label>
+        </div>
+
+        <div class="result">
+          <button type="button" id="calculate-btn">Calculate Estimate</button>
+          <h4 id="output"></h4>
+        </div>
+      </form>
+    </section>
+  </Container>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('calculate-btn')?.addEventListener('click', () => {
+        const size = (document.getElementById('size') as HTMLSelectElement).value;
+        const platform = (document.getElementById('platform') as HTMLSelectElement).value;
+        const builtFromScratch = (document.getElementById('builtFromScratch') as HTMLInputElement).checked;
+        const maintenance = (document.getElementById('maintenance') as HTMLInputElement).checked;
+
+        let base = 0;
+        switch (size) {
+            case 'small': base = 500; break;
+            case 'medium': base = 2000; break;
+            case 'large': base = 7000; break;
+        }
+
+        if (platform === 'app') base += 1500;
+        else if (platform === 'other') base += 500;
+
+        if (builtFromScratch) base += 1000;
+        if (maintenance) base += 500;
+
+        const output = document.getElementById('output');
+        if (output) {
+            output.textContent = `Estimated Cost: $${base.toLocaleString()}`;
+        }
+        });
+    });
+    </script>
+</Layout>
+
+<style>
+  .calculator {
+    max-width: 700px;
+    margin: 3rem auto;
+    padding: 2.5rem 2rem;
+    background: white;
+    border-radius: var(--theme-shape-radius);
+    box-shadow: var(--theme-elevation-low);
+  }
+
+  .calculator h1 {
+    margin-bottom: 1rem;
+  }
+
+  .field {
+    margin-bottom: 1.5rem;
+  }
+
+  .styled-input {
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    width: 100%;
+    background: #f9f9f9;
+  }
+
+  .checkbox input[type="checkbox"] {
+    margin-right: 0.5rem;
+    transform: scale(1.2);
+  }
+
+  button {
+    padding: 0.75rem 1.5rem;
+    background: black;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  button:hover {
+    background: #333;
+  }
+
+  .result {
+    margin-top: 2rem;
+  }
+
+  #output {
+    margin-top: 1rem;
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
+</style>

@@ -1,0 +1,78 @@
+---
+import { Icon } from 'astro-icon/components';
+import { Container, Button } from '@components/odyssey-theme';
+import settings from '../../../config/settings.js';
+import { ThemeSwitcher } from '../../theme-switcher/theme-switcher';
+---
+
+<Container>
+	<section class="hero-section__section">
+		<div class="hero-section__text animate-fade-slide">
+			<h1 class="animate-fade-slide">Frequently Asked Questions</h1>
+			<!-- <p class="animate-fade-delay">
+				Custom builds, clean code, and a stack that scales. NextNode helps great ideas get the tech they deserve.
+			</p> -->
+		</div>
+	</section>
+</Container>
+
+<style>
+	.hero-section__section {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		/* text-align: left; */
+        text-align: center;
+		padding: 1.5rem 1rem;
+		min-height: 25vh;
+	}
+
+    .container {
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+
+	.hero-section__text {
+		max-width: 1200px;
+		width: 100%;
+	}
+
+	.hero-section__text h1 {
+		font-size: 3rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.hero-section__text p {
+		font-size: 1rem;
+		line-height: 1.6rem;
+		margin-bottom: 1.5rem;
+	}
+
+	.hero-btns__container {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	@keyframes fadeSlideUp {
+		0% {
+			opacity: 0;
+			transform: translateY(20px);
+		}
+		100% {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.animate-fade-slide {
+		animation: fadeSlideUp 0.8s ease-out forwards;
+	}
+
+	.animate-fade-delay {
+		opacity: 0;
+		animation: fadeSlideUp 1s ease-out 0.4s forwards;
+	}
+</style>

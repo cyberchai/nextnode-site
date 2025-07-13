@@ -1,0 +1,97 @@
+---
+import { TextSection } from '@components/odyssey-theme';
+import Layout from '../../layouts/Page.astro';
+import ServicesHeroSection from '../../components/sections/heros/ServicesHeroSection.astro';  
+
+const seo = {
+  title: 'Services & Stack | NextNode',
+  description: 'Explore the services and tools NextNode uses to build thoughtful, secure, and scalable tech.',
+};
+---
+
+<Layout {seo}>
+  <ServicesHeroSection />
+
+  <TextSection narrow>
+    <h2>What We Do</h2>
+    <p>
+      We offer flexible, human-centered development services across mobile, web, and backend systems. Whether you're launching something new or upgrading what already works, we'll meet you where you are.
+    </p>
+
+    <h3>Development</h3>
+    <ul>
+      <li>iOS App Development</li>
+      <li>Website Development (custom-coded or CMS-based)</li>
+      <li>WordPress & Wix builds and redesigns</li>
+      <li>Custom templates and full-stack web apps</li>
+    </ul>
+
+    <h3>Maintenance & Support</h3>
+    <ul>
+      <li>Web & app updates</li>
+      <li>Security patching & performance optimization</li>
+      <li>Post-deployment handoff or managed support</li>
+    </ul>
+
+    <h3>Marketing & Visibility</h3>
+    <ul>
+      <li>SEO optimization & metadata structure</li>
+      <li>Lightweight content strategy & branding support</li>
+      <li>Campaign setup, analytics, and integration</li>
+    </ul>
+
+    <p>
+      Got something in mind? Tell us what you need—<strong>we’ll help you build it</strong>.
+    </p>
+
+    <h2 style="margin-top: 4rem;">What We Build With</h2>
+    <p>
+      Every project gets matched with the right tech for its goals. We don’t force tools—we choose intentionally.
+    </p>
+
+    <div class="stack-grid">
+      <img src="/assets/images/logos/swiftui.png" alt="SwiftUI" />
+      <img src="/assets/images/logos/astro.png" alt="Astro" />
+      <img src="/assets/images/logos/django.png" alt="Django" />
+      <img src="/assets/images/logos/spring.png" alt="Java Spring" />
+      <img src="/assets/images/logos/react.png" alt="React" />
+      <img src="/assets/images/logos/htmlcssjs.png" alt="HTML/CSS/JS" />
+      <img src="/assets/images/logos/firebase.png" alt="Firebase" />
+      <img src="/assets/images/logos/sql.png" alt="SQL" />
+      <img src="/assets/images/logos/mongodb.png" alt="MongoDB" />
+      <img src="/assets/images/logos/rabbitmq.png" alt="RabbitMQ" />
+      <img src="/assets/images/logos/docker.png" alt="Docker" />
+      <img src="/assets/images/logos/figma.png" alt="Figma" />
+    </div>
+
+    <p>
+      Need something not listed? We probably work with it. Just ask.
+    </p>
+  </TextSection>
+</Layout>
+
+<style>
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+    justify-items: center;
+    align-items: center;
+  }
+
+  .stack-grid img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    border-radius: 9999px;
+    background-color: var(--theme-surface-2);
+    padding: 0.5rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+  }
+
+  .stack-grid img:hover {
+    transform: scale(1.05);
+  }
+</style>

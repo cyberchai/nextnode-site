@@ -1,0 +1,83 @@
+---
+import { TextSection } from '@components/odyssey-theme';
+import Layout from '../../layouts/Page.astro';
+import FAQHeroSection from '../../components/sections/heros/FAQHeroSection.astro';
+
+const seo = {
+  title: 'FAQ Page | NextNode',
+  description: 'Frequently Asked Questions about NextNode, our services, and how we can help you build your next project.',
+};
+---
+
+<Layout {seo}>
+
+  <FAQHeroSection />
+
+  <TextSection>
+    <details class="faq-item">
+      <summary><span>Are you legally eligible to do business in the US and Canada?</span><span class="plus">+</span></summary>
+      <p>
+        Yes! All contracts are made with NextNode LLC, a US-registered business. We're also Canadian, so we serve clients across North America. Official responsibilities, both financial and legal, are managed by these entities.
+      </p>
+    </details>
+
+    <details class="faq-item">
+      <summary><span>What does your pay rate look like?</span><span class="plus">+</span></summary>
+      <p>
+        It depends on the scope and complexity of the project. We offer both hourly and flat-rate pricing. For example, a simple website might start at $1,500. We’re happy to talk through options during a free consultation.
+      </p>
+    </details>
+
+    <details class="faq-item">
+      <summary><span>What kind of post-deployment support do you offer?</span><span class="plus">+</span></summary>
+      <p>
+        We offer both ongoing maintenance packages and one-time handoffs with full documentation. It's up to you—some clients want us to manage it all, others prefer to take over with a clean launch.
+      </p>
+    </details>
+
+    <details class="faq-item">
+      <summary><span>Do you work with solo founders or early-stage startups?</span><span class="plus">+</span></summary>
+      <p>
+        Absolutely. Some of our favorite projects have started with a simple idea and one driven person behind it. We can help you get to MVP or create a proof of concept with flexibility in scope and budget.
+      </p>
+    </details>
+  </TextSection>
+</Layout>
+
+<style>
+  .faq-header {
+    max-width: 900px;
+    margin-inline: auto;
+  }
+
+  .faq-item {
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--theme-border-color, #ccc);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    /* background-color: var(--theme-surface-2); */
+    background-color: white;
+    box-shadow: var(--theme-elevation-low);
+  }
+
+  .faq-item summary {
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+    padding: 0.25rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .faq-item summary .plus {
+    font-weight: 700;
+    font-size: 1.25rem;
+    line-height: 1;
+    margin-left: 1rem;
+  }
+
+  .faq-item[open] summary {
+    margin-bottom: 0.5rem;
+  }
+</style>

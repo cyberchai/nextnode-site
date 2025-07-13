@@ -1,0 +1,79 @@
+---
+import { Container, FeatureCard, Button, TextCardSection } from '@components/odyssey-theme';
+import { Icon } from 'astro-icon/components';
+import Layout from '../layouts/Page.astro';
+import HomeHeroSection from '../components/sections/heros/HomeHeroSection.astro';
+---
+
+<Layout>
+	<HomeHeroSection />
+	<Container>
+		<section class="feature-card__section">
+			<h2>Our Projects</h2>
+			<p>
+				We’ve worked with startups, small businesses, nonprofits, and solo creatives. Here are a few of our favorite builds.
+			</p>
+			<div class="feature-card__grid">
+				<FeatureCard href="/landing-pages/landing-1" title="Funke AI" imgSrc="/assets/images/home/screenshots/getfunke-1">
+				</FeatureCard>
+
+				<FeatureCard href="/landing-pages/landing-2" title="Pyx Boxing" imgSrc="/assets/images/home/screenshots/pyxboxing-1">
+				</FeatureCard>
+
+				<FeatureCard href="/landing-pages/landing-3" title="chairaharder.com" imgSrc="/assets/images/home/screenshots/chairaharder-1">
+				</FeatureCard>
+				
+				<FeatureCard href="/landing-pages/landing-4" title="Wild Things Studio" imgSrc="/assets/images/home/screenshots/wts-1">
+				</FeatureCard>
+
+				<!-- <FeatureCard href="/landing-pages/landing-5" title="Funke AI" imgSrc="/assets/images/home/screenshots/landing-1">
+				</FeatureCard>
+
+				<FeatureCard href="/landing-pages/landing-6" title="Pyx Boxing" imgSrc="/assets/images/home/screenshots/landing-2">
+				</FeatureCard> -->
+			</div>
+			<!-- <br> -->
+			<!-- <Button href="/projects/projects" outlined customIcon>
+				View All Projects
+				<Fragment slot="icon">
+					<Icon name="ic:baseline-launch" />
+				</Fragment>
+			</Button> -->
+		</section>
+		
+	</Container>
+
+	<TextCardSection>
+			<h2>Curious to see how much your project would cost?</h2>
+      		<p>Use our cost estimation calculator.</p>
+			<div class="cta-buttons__container">
+        <Button
+        href="/company/costcalculator"
+        outlined
+        newTab
+        customIcon
+        >
+        Get Cost Estimate
+        <Fragment slot="icon">
+          <Icon name="ic:baseline-launch" />
+        </Fragment>
+			</div>
+		</TextCardSection>
+
+</Layout>
+
+<style>
+	.feature-card__section {
+		margin: var(--section-margin) auto;
+	}
+	.feature-card__grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: var(--theme-grid-gap);
+	}
+	@media (max-width: 768px) {
+		.feature-card__grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

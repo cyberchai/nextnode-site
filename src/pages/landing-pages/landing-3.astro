@@ -1,0 +1,42 @@
+---
+import { Icon } from 'astro-icon/components';
+import {
+	AnnouncementBar,
+	Button,
+	CustomerQuoteSection,
+	ThreeColumnTextSection,
+	YouTubeEmbedSection,
+	StickyTextImageSection,
+	CtaCardSection,
+} from '@components/odyssey-theme';
+import Layout from '../../layouts/Page.astro';
+import TextAndImageHero from '../../components/sections/heros/TextAndImageHero.astro';
+
+const seo = {
+	title: 'Pyx Boxing',
+	description: 'Women\'s Boxing Sports Equipment and Apparel.',
+};
+---
+
+<Layout {seo}>
+	<TextAndImageHero reversed>
+		<div slot="text-container">
+			<h1>chairaharder.com</h1>
+			<p>A developer portfolio website.</p>
+		</div>
+		<div slot="btns-container">
+			<Button href="/blog" customIcon
+				>See our other projects <Fragment slot="icon">
+					<Icon name="ic:baseline-chevron-right" />
+				</Fragment></Button
+			>
+		</div>
+		<picture slot="image-container">
+			<img
+				src="/assets/images/home/screenshots/chairaharder-1.png"
+				alt="Chaira Harder Portfolio"
+				id="home-hero-image"
+			/>
+		</picture>
+	</TextAndImageHero>
+</Layout>

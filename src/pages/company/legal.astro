@@ -1,0 +1,47 @@
+---
+import { TextSection } from '@components/odyssey-theme';
+import Layout from '../../layouts/Page.astro';
+
+const seo = {
+  title: `Legal Page | NextNode`,
+  description: `Terms of Service and Privacy Policy for NextNode projects, clients, and website users.`,
+};
+---
+
+<Layout seo={seo}>
+  <TextSection narrow>
+    <h1>Legal Information</h1>
+
+    <p>
+      This page outlines the Terms of Service and Privacy Policy for working with NextNode LLC and using our website. We aim to be transparent and fair, and we encourage all clients and visitors to review this information carefully.
+    </p>
+
+    <h2>Terms of Service</h2>
+
+    <p>
+      By engaging NextNode for services, you agree to enter into a professional relationship built on mutual respect, clear communication, and fair compensation. All work is scoped prior to development, and changes to the scope may result in adjustments to the timeline and cost.
+    </p>
+
+    <p>
+      Invoices are typically issued upon completion of defined project milestones or as otherwise outlined in your agreement. Late payments may result in paused work or project delivery delays. Intellectual property rights will be assigned to the client upon final payment, unless otherwise stated in writing.
+    </p>
+
+    <p>
+      We reserve the right to decline or discontinue work that conflicts with our values, violates applicable laws, or misrepresents our work or identity.
+    </p>
+
+    <h2>Privacy Policy</h2>
+
+    <p>
+      We respect your privacy. Any personal information you provide—through our contact forms, consultation scheduling, or email—will be kept confidential and used only to communicate with you about your project or request.
+    </p>
+
+    <p>
+      We do not sell or share your data with third parties. Our website may use cookies or analytics tools to understand general site performance, but we do not track individual user behavior beyond what is necessary to operate the site securely and effectively.
+    </p>
+
+    <p>
+      If you have questions about how we use your information or would like to request changes or deletion, please contact us at <a href="mailto:support@nextnode.ventures">support@nextnode.ventures</a>.
+    </p>
+  </TextSection>
+</Layout>

@@ -1,0 +1,89 @@
+---
+import {Icon} from 'astro-icon/components';
+import { Button, Container, TextCardSection } from '@components/odyssey-theme';
+import Layout from '../../layouts/Page.astro';
+import ContactForm from '../../components/forms/ContactForm.astro';
+
+const seo = {
+	title: 'Book A Consultation with NextNode',
+	description: 'Get a free consultation call with NextNode to discuss your project needs and how we can help.',
+};
+---
+
+<Layout {seo}>
+	<Container>
+		<TextCardSection>
+			<h1>Book a free consultation</h1>
+      		<p>Have an idea? Let’s talk about it.</p>
+			<div class="cta-buttons__container">
+        <Button
+        href="https://github.com/treefarmstudio/odyssey-theme"
+        outlined
+        newTab
+        customIcon
+        >
+        Turn this into a booking calendar. Use API.
+        <Fragment slot="icon">
+          <Icon name="ic:baseline-launch" />
+        </Fragment>
+      <!-- </Button>
+        <Button
+					href="/theme/theme-setup"
+          customIcon
+					>
+          Theme Setup
+          <Fragment slot="icon">
+            <Icon name="ic:baseline-chevron-right" />
+          </Fragment>
+				</Button>
+        <Button
+					href="/theme/customizing-odyssey"
+          customIcon
+					>
+          Customizing Odyssey
+          <Fragment slot="icon">
+            <Icon name="ic:baseline-chevron-right" />
+          </Fragment>
+				</Button> -->
+			</div>
+		</TextCardSection>
+	</Container>
+
+
+
+	<Container>
+		<section class="contact-hero__section">
+			<div class="contact-hero__text-section">
+				<h1>Contact Us</h1>
+				<p>
+					We would love to hear from you! Whether you have a question about our services, need assistance with a project, or just want to say hello, feel free to reach out.
+				</p>
+				<div>
+					<p>
+						<!-- <em><a href="tel:3478811888">(347) 881-1888</a></em> • <em> -->
+              <em><a href="mailto:support@nextnode.ventures">support@nextnode.ventures</a></em
+						>
+					</p>
+				</div>
+			</div>
+			<div class="col-2__container">
+				<ContactForm />
+			</div> 
+      <!-- Todo: MAKE SURE SUBMIT BUTTON WORKS BRUH -->
+		</section>
+	</Container>
+
+  <div><br></div>
+
+</Layout>
+
+<style>
+	.cta-buttons__container {
+		display: flex;
+		flex-wrap: wrap;
+	}
+	.cta-buttons__container :global(a) {
+    margin-right: 1rem;
+		margin-bottom: 1rem;
+	}
+</style>

@@ -1,0 +1,60 @@
+---
+import { TextSection } from '@components/odyssey-theme';
+import Layout from '../../layouts/Page.astro';
+import HeroSection from '../../components/sections/heros/HeroSection.astro';
+
+const seo = {
+	title: 'About | NextNode',
+	description: 'Who we are, what we care about, and why we build.',
+};
+---
+
+<Layout {seo}>
+	<HeroSection>
+		<div slot="text-container">
+			<h1>Meet NextNode</h1>
+			<p>
+				NextNode is proudly <strong>woman-owned</strong> and <strong>BIPOC-led</strong>.
+			</p>
+		</div>
+    <picture slot="image-container">
+      <img
+        src="/assets/images/home/gears.jpg"
+        alt="NextNode team"
+        id="home-hero-image"
+      />
+    </picture>
+	</HeroSection>
+
+  <TextSection narrow>
+    <p>
+      What started as a side hustle became a full-time mission: to design secure, purposeful, and good-looking tech that serves people and communities.
+    </p>
+
+    <p>
+      We’ve been active for <strong>3 years</strong>, with over <strong>7 years of development experience</strong> and a <strong>Computer Science degree</strong> behind our code. Our background includes startups, nonprofits, and global organizations—and we bring that range into every project.
+    </p>
+
+    <p>
+      What sets us apart? We focus on clarity. On clean design. On security that doesn’t get in the way. And most importantly, on building tech that makes sense for the people using it.
+    </p>
+
+    <p>
+      Our values are simple: <strong>Transparency</strong> in how we work. <strong>Community</strong> in how we collaborate. And a deep belief in helping everyone grow—whether you’re a founder, a partner, or just getting started.
+    </p>
+
+    <p>
+      From iOS apps to full-stack builds, from solo creatives to mission-driven orgs, we’re committed to helping great ideas grow.
+    </p>
+
+    <br>
+    <h2>Our Commitment</h2>
+		<p>
+			<strong>Tech should be useful and meaningful.</strong> We aim to take on at least one social-impact project each year at a reduced or pro bono rate. We also actively connect founders and creators in our network to help support more shared growth across communities.
+		</p>
+
+		<p>
+			Working with us means being part of something a little bigger.
+		</p>
+  </TextSection>
+</Layout>

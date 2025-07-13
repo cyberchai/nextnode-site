@@ -1,0 +1,84 @@
+---
+import { Icon } from 'astro-icon/components';
+import { Container, Button } from '@components/odyssey-theme';
+import settings from '../../../config/settings.js';
+import { ThemeSwitcher } from '../../theme-switcher/theme-switcher';
+---
+
+<Container>
+	<section class="hero-section__section">
+		<div class="hero-section__text animate-fade-slide">
+			<h1 class="animate-fade-slide">Small team, Big energy, Better tech.</h1>
+			<p class="animate-fade-delay">
+				At NextNode, we design and build thoughtful digital products with clean design, strong security, and clear purpose. From iOS apps to full-stack websites, we turn ideas into tools that work — and look good doing it.
+				<br><br>
+				Whether you’re a startup with a vision, a nonprofit with heart, or a brand that just needs things to work, you’re in the right place.
+			</p>
+			<div class="hero-btns__container animate-fade-delay">
+				<Button href="/theme/get-started" customIcon>
+					Book a Call
+					<Fragment slot="icon">
+						<Icon name="ic:baseline-chevron-right" />
+					</Fragment>
+				</Button>
+			</div>
+			{settings.enableThemeSwitcher && <ThemeSwitcher client:only />}
+		</div>
+	</section>
+</Container>
+
+<style>
+	/* Section layout */
+	.hero-section__section {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		text-align: left;
+		padding: 6rem 1rem;
+		min-height: 90vh;
+	}
+
+	.hero-section__text {
+		max-width: 1200px;
+		width: 100%;
+	}
+
+	.hero-section__text h1 {
+		font-size: 2.5rem;
+		margin-bottom: 1rem;
+	}
+
+	.hero-section__text p {
+		font-size: 1.125rem;
+		line-height: 1.75rem;
+		margin-bottom: 2rem;
+	}
+
+	.hero-btns__container {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	/* Animations */
+	@keyframes fadeSlideUp {
+		0% {
+			opacity: 0;
+			transform: translateY(20px);
+		}
+		100% {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.animate-fade-slide {
+		animation: fadeSlideUp 0.8s ease-out forwards;
+	}
+
+	.animate-fade-delay {
+		opacity: 0;
+		animation: fadeSlideUp 1s ease-out 0.4s forwards;
+	}
+</style>
