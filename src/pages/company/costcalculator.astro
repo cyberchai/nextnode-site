@@ -7,6 +7,7 @@ const seo = {
   description: 'Get a rough estimate for your web, mobile, or custom project based on your needs.',
 };
 
+// keep in mind this function isn't being used in the code below right now FYI
 function calculateEstimate({ size, platform, builtFromScratch, maintenance }) {
   let base = 0;
 
@@ -44,7 +45,7 @@ function calculateEstimate({ size, platform, builtFromScratch, maintenance }) {
           <select id="size" class="styled-input">
             <option value="small">Small (e.g., personal portfolio, landing page)</option>
             <option value="medium">Medium (e.g., e-commerce/marketing site or MVP app)</option>
-            <option value="large">Large (e.g., multi-user platform or SaaS)</option>
+            <option value="large">Large (e.g., multi-user platform or light SaaS)</option>
           </select>
         </div>
 
@@ -67,7 +68,7 @@ function calculateEstimate({ size, platform, builtFromScratch, maintenance }) {
         <div class="field checkbox">
           <label>
             <input type="checkbox" id="maintenance" />
-            <b>Include post-launch maintenance</b>
+            <b>Include 6-month post-launch maintenance</b>
           </label>
         </div>
 
@@ -89,15 +90,15 @@ function calculateEstimate({ size, platform, builtFromScratch, maintenance }) {
 
         let base = 0;
         switch (size) {
-            case 'small': base = 500; break;
-            case 'medium': base = 2000; break;
-            case 'large': base = 7000; break;
+            case 'small': base = 400; break;
+            case 'medium': base = 1700; break;
+            case 'large': base = 6000; break;
         }
 
-        if (platform === 'app') base += 1500;
+        if (platform === 'app') base += 1000; // usually 1500
         else if (platform === 'other') base += 500;
 
-        if (builtFromScratch) base += 1000;
+        if (builtFromScratch) base += 1000; // usually 1000
         if (maintenance) base += 500;
 
         const output = document.getElementById('output');

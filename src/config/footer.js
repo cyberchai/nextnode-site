@@ -78,7 +78,7 @@ export const footerLists = [
     items: [
       {
         title: 'Book a free consultation →',
-        slug: '/get-started',
+        slug: '/theme/get-started',
       },
     ],
   },

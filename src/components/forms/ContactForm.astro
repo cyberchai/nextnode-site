@@ -5,17 +5,30 @@ const selectOptions = [
   "Google Search",
   "Social Media",
   "Referral",
+  "Poster",
 ]
 
 ---
-
-<form name="Contact Form" method="POST" action="/contact-thank-you">
-  <FormInput type="text" label="Name" name="Name" placeholder="John Doe" />
+<!-- using formspree -->
+<!-- <form name="Contact Form" method="POST" action="/contact-thank-you">
+  <FormInput type="text" label="Name" name="Name" placeholder="Jane Doe" />
   <FormInput type="email" label="Email" name="Email" placeholder="hello@example.com" />
   <FormSelect label="How Did You Hear About Us?" options={selectOptions} />
   <FormTextarea label="Message" name="Message" placeholder="Your message here..." />
   <Button>Submit</Button>
+</form> -->
+
+<form action="https://formspree.io/f/mwpqeglg" method="POST">
+  {/* Honeypot field to prevent spam bots */}
+  <input type="text" name="_gotcha" style={{ display: 'none' }} />
+
+  <FormInput type="text" label="Name" name="name" placeholder="Jane Doe" required />
+  <FormInput type="email" label="Email" name="email" placeholder="hello@example.com" required />
+  <FormSelect label="How Did You Hear About Us?" name="referral" options={selectOptions} />
+  <FormTextarea label="Message" name="message" placeholder="Your message here..." required />
+  <Button type="submit">Send</Button>
 </form>
+
 
 <style>
   form {
