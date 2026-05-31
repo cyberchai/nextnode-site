@@ -12,7 +12,8 @@ const {
     featuredImage,
     tags,
     company,
-    services
+    services,
+    externalUrl
   }
 } = Astro.props;
 
@@ -53,6 +54,12 @@ const seo = {
       <p class="project-date">
         <time><em>Completed {completedDate}</em></time>
       </p>
+    )}
+
+    {externalUrl && (
+      <a class="project-external-link" href={externalUrl} target="_blank" rel="noreferrer">
+        Visit live project
+      </a>
     )}
 
     {featuredImage && (
@@ -114,6 +121,17 @@ const seo = {
     margin-bottom: 1rem;
     font-size: 0.9rem;
     opacity: 0.7;
+  }
+
+  .project-external-link {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .project-external-link:hover {
+    text-decoration: underline;
   }
 
   .project-layout__img {

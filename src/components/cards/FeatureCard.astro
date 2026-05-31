@@ -1,5 +1,6 @@
 ---
 const {href, imgSrc, title} = Astro.props;
+const isExternal = href?.startsWith('http');
 ---
 
 <style>
@@ -7,22 +8,28 @@ const {href, imgSrc, title} = Astro.props;
     background-color: var(--theme-surface-1);
     color: var(--theme-on-surface-1);
     border-radius: var(--theme-shape-radius);
+    height: 100%;
+    overflow: hidden;
   }
   .feature-card__link {
     display: block;
     text-decoration: none;
+    height: 100%;
   }
   .featured-card__content {
     padding: 1rem 1rem 0 1rem;
-     display: flex;
+    display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    overflow-y: hidden;
+    justify-content: space-between;
+    height: 100%;
+    overflow: hidden;
   }
   .featured-card__content picture {
+    display: flex;
+    justify-content: center;
     width: 100%;
-    height: 100%;
+    overflow: hidden;
   }
   .feature-card__card .feature-card__img {
     --image-shadow: 0 -0.5rem 1rem rgba(138, 138, 138, 0.12);
@@ -57,7 +64,12 @@ const {href, imgSrc, title} = Astro.props;
 </div>  -->
 
 <div class="feature-card__card">
-  <a class="feature-card__link" href={href}>
+  <a
+    class="feature-card__link"
+    href={href}
+    target={isExternal ? '_blank' : undefined}
+    rel={isExternal ? 'noreferrer' : undefined}
+  >
     <div class="featured-card__content">
       <h3 class="feature-card__title">{title}</h3>
       <!-- Currently using PNG only -->
@@ -75,5 +87,3 @@ const {href, imgSrc, title} = Astro.props;
     </div>
   </a>
 </div>
-
-

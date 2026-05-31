@@ -13,6 +13,7 @@ const posts = await Astro.glob('./project-posts/*.mdx').then((projects) =>
     featuredImage: frontmatter.featuredImage,
     services: frontmatter.services,
     tags: frontmatter.tags,
+    externalUrl: frontmatter.externalUrl,
     href: url,
   }))
 );

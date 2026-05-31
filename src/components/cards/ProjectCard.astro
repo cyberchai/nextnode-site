@@ -1,5 +1,5 @@
 ---
-const { title, company, description, featuredImage, services, tags } = Astro.props;
+const { title, company, description, featuredImage, services, tags, externalUrl } = Astro.props;
 ---
 
 <div class="project-card">
@@ -13,6 +13,11 @@ const { title, company, description, featuredImage, services, tags } = Astro.pro
   <div class="tags">
     {tags?.map(tag => <span class="tag">{tag}</span>)}
   </div>
+  {externalUrl && (
+    <a class="project-card__external-link" href={externalUrl} target="_blank" rel="noreferrer">
+      Visit project
+    </a>
+  )}
 </div>
 
 <style>
@@ -72,5 +77,15 @@ const { title, company, description, featuredImage, services, tags } = Astro.pro
     padding: 0.25rem 0.75rem;
     border-radius: 9999px;
     font-size: 0.75rem;
+  }
+  .project-card__external-link {
+    display: inline-block;
+    margin-top: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .project-card__external-link:hover {
+    text-decoration: underline;
   }
 </style>
