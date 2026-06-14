@@ -1,0 +1,149 @@
+---
+// Site-wide GSAP scroll reveals: content blocks fade + slide up in staggered
+// batches as they enter the viewport.
+//
+// Design notes:
+//  - Loads GSAP 3.15 + ScrollTrigger from jsDelivr, but REUSES any GSAP already
+//    on the page (the home hero loads its own 3.13 for the scramble /
+//    disintegration effects) so we never ship two conflicting copies.
+//  - Flash-free: matching blocks are pre-hidden via the `nn-reveal` class on
+//    <html>, added synchronously in <head> before first paint. JS then takes
+//    over the hidden state inline and releases the class.
+//  - Degrades gracefully: a failsafe timer reveals everything if the CDN is
+//    blocked, and we never animate when the user prefers reduced motion.
+//  - Leaves the heroes (.hero / .about-hero) and the services page's CSS
+//    view-timeline stacking cards (.studio-card / .studio-stack) untouched.
+//
+// The CSS pre-hide selector below and the JS `SELECTOR` + exclusion filter are
+// intentionally kept in sync — change them together.
+---
+
+<style is:global>
+	html.nn-reveal #content
+		:is(h2, h3, p, figure, blockquote, .feature-card, .project-card, .cta-buttons__container, .stack-grid img):not(.hero *):not(.about-hero *):not(.studio-card *):not(.studio-stack *):not(.feature-card *):not(.project-card *) {
+		opacity: 0;
+		transform: translateY(28px);
+	}
+</style>
+
+<script is:inline>
+	// Pre-hide before paint so revealed content never flashes. Reduced-motion
+	// users skip the whole system and see everything immediately.
+	(function () {
+		var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		if (reduce) return;
+		var root = document.documentElement;
+		root.classList.add('nn-reveal');
+		// Failsafe: if GSAP never initializes (e.g. CDN blocked), don't leave
+		// content stuck invisible.
+		setTimeout(function () {
+			if (!root.classList.contains('nn-reveal-done')) root.classList.remove('nn-reveal');
+		}, 3000);
+	})();
+</script>
+
+<script is:inline>
+	(function () {
+		var root = document.documentElement;
+
+		function reduceMotion() {
+			return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		}
+
+		function loadScript(src) {
+			return new Promise(function (resolve, reject) {
+				var s = document.createElement('script');
+				s.src = src;
+				s.async = false; // preserve order: gsap before ScrollTrigger
+				s.onload = resolve;
+				s.onerror = reject;
+				document.head.appendChild(s);
+			});
+		}
+
+		// Reuse GSAP if it's already on the page (home hero); otherwise pull the
+		// requested 3.15 build from jsDelivr.
+		function ensureGsap() {
+			if (window.gsap && window.ScrollTrigger) return Promise.resolve();
+			var chain = Promise.resolve();
+			if (!window.gsap) {
+				chain = chain.then(function () {
+					return loadScript('https://cdn.jsdelivr.net/npm/gsap@3.15/dist/gsap.min.js');
+				});
+			}
+			chain = chain.then(function () {
+				if (!window.ScrollTrigger) {
+					return loadScript('https://cdn.jsdelivr.net/npm/gsap@3.15/dist/ScrollTrigger.min.js');
+				}
+			});
+			return chain;
+		}
+
+		var SELECTOR =
+			'#content :is(h2, h3, p, figure, blockquote, .feature-card, .project-card, .cta-buttons__container, .stack-grid img)';
+
+		function collectTargets() {
+			var nodes = Array.prototype.slice.call(document.querySelectorAll(SELECTOR));
+			return nodes.filter(function (el) {
+				// Heroes and the CSS-animated studio stack run their own motion.
+				if (el.closest('.hero, .about-hero, #hero-bg, .studio-card, .studio-stack')) return false;
+				// Inner text rides along with its card, which animates as one unit.
+				var card = el.closest('.feature-card, .project-card');
+				if (card && card !== el) return false;
+				return true;
+			});
+		}
+
+		function setup() {
+			if (!window.gsap || !window.ScrollTrigger) return;
+			gsap.registerPlugin(ScrollTrigger);
+
+			var targets = collectTargets();
+
+			// Take over the hidden state inline, then release the global CSS hide
+			// (this also reveals any excluded element the CSS may have caught).
+			gsap.set(targets, { opacity: 0, y: 28, willChange: 'transform, opacity' });
+			root.classList.add('nn-reveal-done');
+			root.classList.remove('nn-reveal');
+
+			// Batch neighbours that enter together so they reveal with a stagger.
+			ScrollTrigger.batch(targets, {
+				start: 'top 88%',
+				once: true,
+				onEnter: function (batch) {
+					gsap.to(batch, {
+						opacity: 1,
+						y: 0,
+						duration: 0.8,
+						ease: 'power2.out',
+						stagger: 0.08,
+						overwrite: true,
+						// Hand transform control back to CSS so things like the
+						// stack-grid hover scale keep working.
+						clearProps: 'transform,willChange',
+					});
+				},
+			});
+
+			ScrollTrigger.refresh();
+		}
+
+		function boot() {
+			if (reduceMotion()) {
+				root.classList.remove('nn-reveal');
+				return;
+			}
+			ensureGsap()
+				.then(setup)
+				.catch(function () {
+					root.classList.remove('nn-reveal');
+				});
+		}
+
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', boot);
+		} else {
+			boot();
+		}
+	})();
+</script>

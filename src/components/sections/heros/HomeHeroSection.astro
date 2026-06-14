@@ -1,84 +1,316 @@
 ---
-import { Icon } from 'astro-icon/components';
-import { Container, Button } from '@components/odyssey-theme';
-import settings from '../../../config/settings.js';
-import { ThemeSwitcher } from '../../theme-switcher/theme-switcher';
+// Hero — big wordmark + tagline over an animated Vanta fog background.
 ---
 
-<Container>
-	<section class="hero-section__section">
-		<div class="hero-section__text animate-fade-slide">
-			<h1 class="animate-fade-slide">Small team, Big energy, Better tech.</h1>
-			<p class="animate-fade-delay">
-				At NextNode Studio, we design and build thoughtful digital products with clean design, strong security, and clear purpose. From iOS apps to websites, we turn ideas into tools that work <i>and</i> look good.
-				<br><br>
-				Whether you’re growing a business, shaping a cause, or just need a hand bringing your creative vision online, we’ve got you covered.
-			</p>
-			<div class="hero-btns__container animate-fade-delay">
-				<Button href="/theme/get-started" customIcon>
-					Book a Call
-					<Fragment slot="icon">
-						<Icon name="ic:baseline-chevron-right" />
-					</Fragment>
-				</Button>
-			</div>
-			{settings.enableThemeSwitcher && <ThemeSwitcher client:only />}
+<section class="hero">
+	<div id="hero-bg" class="hero__bg">
+		<div class="hero__content">
+			<h1 class="hero__title">NEXTNODE</h1>
+			<p class="hero__tagline">Creative engineering for people moving culture forward.</p>
 		</div>
-	</section>
-</Container>
+	</div>
+</section>
+
+<!-- Vanta fog: three.js r134 + vanta.fog from CDN -->
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script is:inline src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.fog.min.js"></script>
+<script is:inline>
+	(function () {
+		function initVanta() {
+			if (!window.VANTA || !window.VANTA.FOG || !document.getElementById('hero-bg')) return;
+			window.__nnFog = window.VANTA.FOG({
+				el: '#hero-bg',
+				mouseControls: true,
+				touchControls: true,
+				gyroControls: false,
+				minHeight: 200.0,
+				minWidth: 200.0,
+				blurFactor: 0.6,
+				zoom: 1,
+				scale: 2,
+				scaleMobile: 4,
+				speed: 0.8,
+				highlightColor: 0x00b3ff,
+				midtoneColor: 0x0096ff,
+				lowlightColor: 0x4a00ff,
+				baseColor: 0xe8e1ff,
+				backgroundAlpha: 1,
+			});
+		}
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', initVanta);
+		} else {
+			initVanta();
+		}
+	})();
+</script>
+
+<!-- GSAP ScrambleText: decode-in the wordmark on load -->
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrambleTextPlugin.min.js"></script>
+<script is:inline>
+	(function () {
+		var el = document.querySelector('.hero__title');
+		if (!el || !window.gsap || !window.ScrambleTextPlugin) return;
+		// Respect reduced-motion: leave the text as-is.
+		if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+		gsap.registerPlugin(ScrambleTextPlugin);
+		gsap.to(el, {
+			duration: 1.6,
+			ease: 'none',
+			scrambleText: {
+				text: 'NEXTNODE',
+				chars: 'upperCase',
+				revealDelay: 0.5,
+				speed: 0.5,
+			},
+		});
+	})();
+</script>
+
+<!-- Disintegration on scroll: shatter the hero into drifting, fading particles -->
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script is:inline>
+	(function () {
+		if (!window.gsap || !window.ScrollTrigger || !window.html2canvas) return;
+		if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+		var hero = document.querySelector('.hero');
+		var bg = document.getElementById('hero-bg');
+		var content = bg && bg.querySelector('.hero__content');
+		if (!hero || !bg || !content) return;
+
+		gsap.registerPlugin(ScrollTrigger);
+
+		var COUNT = 50; // number of particle layers
+		var REPEAT = 3; // pixel oversampling (denser shards)
+		var CAP_W = 720; // cap capture width for memory/perf; upscaled via CSS
+
+		// Scatter the captured pixels across COUNT canvases, biased by x so the
+		// panel comes apart left-to-right, then return the shard <canvas> nodes.
+		function buildShards(srcCanvas, container) {
+			var w = srcCanvas.width;
+			var h = srcCanvas.height;
+			var sctx = srcCanvas.getContext('2d');
+			var img = sctx.getImageData(0, 0, w, h);
+			var list = [];
+			for (var i = 0; i < COUNT; i++) list.push(sctx.createImageData(w, h));
+			for (var x = 0; x < w; x++) {
+				for (var y = 0; y < h; y++) {
+					for (var l = 0; l < REPEAT; l++) {
+						var idx = (x + y * w) * 4;
+						var di = Math.floor((COUNT * (Math.random() + (2 * x) / w)) / 3);
+						if (di > COUNT - 1) di = COUNT - 1;
+						var d = list[di].data;
+						d[idx] = img.data[idx];
+						d[idx + 1] = img.data[idx + 1];
+						d[idx + 2] = img.data[idx + 2];
+						d[idx + 3] = img.data[idx + 3];
+					}
+				}
+			}
+			var shards = [];
+			list.forEach(function (data) {
+				var c = document.createElement('canvas');
+				c.width = w;
+				c.height = h;
+				c.getContext('2d').putImageData(data, 0, 0);
+				c.style.cssText =
+					'position:absolute;inset:0;width:100%;height:100%;will-change:transform,opacity;';
+				container.appendChild(c);
+				shards.push(c);
+			});
+			return shards;
+		}
+
+		// Composite a snapshot of the hero: lavender base -> live fog frame -> text.
+		function capture(done) {
+			var rect = bg.getBoundingClientRect();
+			var scale = Math.min(1, CAP_W / rect.width);
+			var cw = Math.max(1, Math.round(rect.width * scale));
+			var ch = Math.max(1, Math.round(rect.height * scale));
+			var cap = document.createElement('canvas');
+			cap.width = cw;
+			cap.height = ch;
+			var cx = cap.getContext('2d');
+			cx.fillStyle = '#e8e1ff';
+			cx.fillRect(0, 0, cw, ch);
+			try {
+				var fx = window.__nnFog;
+				if (fx && fx.renderer && fx.scene && fx.camera) {
+					fx.renderer.render(fx.scene, fx.camera); // fresh frame, sync
+					cx.drawImage(fx.renderer.domElement, 0, 0, cw, ch);
+				} else {
+					var fc = bg.querySelector('canvas');
+					if (fc) cx.drawImage(fc, 0, 0, cw, ch);
+				}
+			} catch (e) {}
+			window
+				.html2canvas(content, { backgroundColor: null, scale: scale, logging: false })
+				.then(function (txt) {
+					cx.drawImage(txt, 0, 0, cw, ch);
+					done(cap);
+				})
+				.catch(function () {
+					done(cap);
+				});
+		}
+
+		function setup() {
+			// Snapshot must show the resolved wordmark, never a mid-scramble frame.
+			var title = bg.querySelector('.hero__title');
+			if (title) {
+				gsap.killTweensOf(title);
+				title.textContent = 'NEXTNODE';
+			}
+			capture(function (cap) {
+				var layer = document.createElement('div');
+				// White sits behind the particles, so the panel dissolves to white.
+				layer.style.cssText =
+					'position:absolute;inset:0;visibility:hidden;pointer-events:none;z-index:3;background:#fff;';
+				bg.appendChild(layer);
+				var shards = buildShards(cap, layer);
+				var fogCanvas = bg.querySelector('canvas');
+				var liveEls = [content, fogCanvas].filter(Boolean);
+
+				// Brief time-based crossfade between the live fog and the frozen
+				// snapshot, so the swap isn't an abrupt freeze. Fires only when the
+				// active state flips, not on every scrub frame.
+				var isActive = false;
+				var XFADE = 0.45;
+				function setActive(active) {
+					if (active === isActive) return;
+					isActive = active;
+					if (active) {
+						layer.style.visibility = 'visible';
+						gsap.fromTo(layer, { opacity: 0 }, { opacity: 1, duration: XFADE, overwrite: 'auto' });
+						gsap.to(liveEls, { opacity: 0, duration: XFADE, overwrite: 'auto' });
+					} else {
+						gsap.to(liveEls, { opacity: 1, duration: XFADE, overwrite: 'auto' });
+						gsap.to(layer, {
+							opacity: 0,
+							duration: XFADE,
+							overwrite: 'auto',
+							onComplete: function () {
+								if (!isActive) layer.style.visibility = 'hidden';
+							},
+						});
+					}
+				}
+
+				var tl = gsap.timeline({
+					scrollTrigger: {
+						trigger: hero,
+						// Dissolve as the hero scrolls out — no pin, so the page keeps
+						// scrolling normally and the effect tracks scroll position.
+						start: 'top top',
+						end: 'bottom top',
+						scrub: 1,
+						invalidateOnRefresh: true,
+						onUpdate: function (self) {
+							setActive(self.progress > 0.002);
+						},
+					},
+				});
+				shards.forEach(function (c, i) {
+					var a = (Math.random() - 0.5) * 2 * Math.PI;
+					tl.to(
+						c,
+						{
+							duration: 1,
+							ease: 'none',
+							rotation: 30 * (Math.random() - 0.5),
+							x: 60 * Math.sin(a),
+							y: 60 * Math.cos(a),
+							opacity: 0,
+						},
+						(i / shards.length) * 2
+					);
+				});
+				ScrollTrigger.refresh();
+			});
+		}
+
+		// Build after the fog has rendered and the scramble (1.6s) has played out.
+		function start() {
+			var fontsReady =
+				document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+			fontsReady.then(function () {
+				setTimeout(setup, 2200);
+			});
+		}
+		window.addEventListener('load', start);
+	})();
+</script>
 
 <style>
-	/* Section layout */
-	.hero-section__section {
+	.hero {
+		--hero-top: 0px;
+		/* Gap below the panel before the next section. */
+		--bottom-gap: clamp(6px, 0.7vw, 10px);
+		/* Match the side margins of the <Container> used by "Our Projects". */
+		max-width: var(--container-max-width);
+		margin: 0 auto;
+		padding: var(--hero-top) 1rem var(--bottom-gap);
+	}
+
+	.hero__bg {
+		position: relative;
+		overflow: hidden;
+		width: 100%;
+		/* Fill the viewport below the sticky header. */
+		height: calc(100vh - var(--header-h) - var(--hero-top) - var(--bottom-gap));
+		height: calc(100dvh - var(--header-h) - var(--hero-top) - var(--bottom-gap));
+		border-radius: clamp(22px, 2.4vw, 38px);
+		/* Fallback (and matches the fog's baseColor) until the canvas renders. */
+		background: #e8e1ff;
+		/* Lets the wordmark size itself off the panel width via cqw. */
+		container-type: inline-size;
+	}
+
+	/* Keep the text above the Vanta canvas. */
+	.hero__content {
+		position: relative;
+		z-index: 2;
+		box-sizing: border-box;
+		height: 100%;
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		text-align: left;
-		padding: 6rem 1rem;
-		min-height: 90vh;
+		justify-content: space-between;
+		padding: clamp(1.25rem, 3vw, 2.75rem);
 	}
 
-	.hero-section__text {
-		max-width: 1200px;
-		width: 100%;
+	.hero__title {
+		margin: 0;
+		font-family: var(--theme-font-family-sans);
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: -0.035em;
+		line-height: 0.82;
+		color: #000;
+		white-space: nowrap;
+		font-size: 16.5cqw;
 	}
 
-	.hero-section__text h1 {
-		font-size: 2.5rem;
-		margin-bottom: 1rem;
+	.hero__tagline {
+		margin: 0;
+		max-width: 30ch;
+		font-family: var(--theme-font-family-sans);
+		font-weight: 500;
+		line-height: 1.05;
+		letter-spacing: -0.01em;
+		color: #0b0b0b;
+		font-size: clamp(1.4rem, 4cqw, 2.7rem);
 	}
 
-	.hero-section__text p {
-		font-size: 1.125rem;
-		line-height: 1.75rem;
-		margin-bottom: 2rem;
-	}
-
-	.hero-btns__container {
-		display: flex;
-		align-items: center;
-		gap: 1rem;
-	}
-
-	/* Animations */
-	@keyframes fadeSlideUp {
-		0% {
-			opacity: 0;
-			transform: translateY(20px);
+	@media (max-width: 600px) {
+		.hero__title {
+			/* A touch larger relative to the narrower panel so it still reads big. */
+			font-size: 17cqw;
 		}
-		100% {
-			opacity: 1;
-			transform: translateY(0);
+		.hero__tagline {
+			max-width: 20ch;
 		}
-	}
-
-	.animate-fade-slide {
-		animation: fadeSlideUp 0.8s ease-out forwards;
-	}
-
-	.animate-fade-delay {
-		opacity: 0;
-		animation: fadeSlideUp 1s ease-out 0.4s forwards;
 	}
 </style>

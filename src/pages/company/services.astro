@@ -1,47 +1,96 @@
 ---
 import { TextSection } from '@components/odyssey-theme';
 import Layout from '../../layouts/Page.astro';
-import ServicesHeroSection from '../../components/sections/heros/ServicesHeroSection.astro';  
+import ServicesHeroSection from '../../components/sections/heros/ServicesHeroSection.astro';
 
 const seo = {
   title: 'Services & Stack | NextNode Studio',
   description: 'Explore the services and tools NextNode Studio uses to build thoughtful, secure, and scalable tech.',
 };
+
+const studios = [
+  {
+    title: 'Commerce',
+    lead: 'For shops, cafés, and small businesses.',
+    body: 'Online storefronts, menus, and booking that turn visitors into customers, built to be easy to run yourself.',
+    points: [
+      'Custom websites, plus WordPress & Wix builds and redesigns',
+      'Online ordering, menus, booking, and payments',
+      'E-commerce setup and product catalogs',
+      'Security patching, performance, and ongoing support',
+    ],
+    // Vanta FOG palette (decimal). Green.
+    fog: { highlight: 15400904, midtone: 8847104, lowlight: 6673469, base: 6935642 },
+    fallback: '#69d45a',
+  },
+  {
+    title: 'Campaigns',
+    lead: 'For nonprofits, advocates, and events.',
+    body: 'Landing pages and campaign tooling that get your message to the right people and measure what lands.',
+    points: [
+      'Campaign and event landing pages',
+      'SEO optimization and metadata structure',
+      'Analytics, tracking, and integrations',
+      'Lightweight content strategy and branding support',
+    ],
+    // Vanta FOG palette (decimal). Blue.
+    fog: { highlight: 13165055, midtone: 38655, lowlight: 4013524, base: 5939668 },
+    fallback: '#5aa1d4',
+  },
+  {
+    title: 'Culture',
+    lead: 'For artists, writers, and musicians.',
+    body: 'Portfolios and personal sites that show you and your work beautifully, with no technical jargon required.',
+    points: [
+      'Portfolio, gallery, and personal sites',
+      'Custom templates and tailored design',
+      'Blogs, storytelling, and media galleries',
+      'WordPress or fully custom builds',
+    ],
+    // Vanta FOG palette (decimal). Purple/magenta.
+    fog: { highlight: 15911167, midtone: 13762815, lowlight: 13909406, base: 13916855 },
+    fallback: '#d45ab7',
+  },
+  {
+    title: 'Startups',
+    lead: 'For founders and early-stage teams.',
+    body: 'From proof of concept to MVP, we help you ship the first version with flexible scope and budget.',
+    points: [
+      'iOS app development',
+      'Full-stack web apps',
+      'MVPs and proofs of concept',
+      'Post-launch handoff or managed support',
+    ],
+    // Vanta FOG palette (decimal). Warm (default fog) with a violet lowlight.
+    fog: { highlight: 16761600, midtone: 16719616, lowlight: 6768383, base: 16772075 },
+    fallback: '#ffebeb',
+  },
+];
 ---
 
 <Layout {seo}>
   <ServicesHeroSection />
 
   <TextSection narrow>
-    <h2>What We Do</h2>
-    <p>
-      We offer flexible, human-centered development services across mobile, web, and light backend systems. Whether you're launching something new or upgrading what already works, we can meet you where you are.
-    </p>
-
-    <h3>Development</h3>
-    <ul>
-      <li>iOS App Development</li>
-      <li>Website Development (custom-coded or CMS-based)</li>
-      <li>WordPress & Wix builds and redesigns</li>
-      <li>Custom templates and full-stack web apps</li>
-    </ul>
-
-    <h3>Maintenance & Support</h3>
-    <ul>
-      <li>Web & app updates</li>
-      <li>Security patching & performance optimization</li>
-      <li>Post-deployment handoff or managed support</li>
-    </ul>
-
-    <h3>Marketing & Visibility</h3>
-    <ul>
-      <li>SEO optimization & metadata structure</li>
-      <li>Lightweight content strategy & branding support</li>
-      <li>Campaign setup, analytics, and integration</li>
-    </ul>
+    <div class="studio-stack">
+      {studios.map((studio, i) => (
+        <article id={`studio-${i}`} class={`studio-card studio-card--${i}`} style={`--index: ${i}; --total: ${studios.length}; --fallback: ${studio.fallback};`}>
+          <div class="studio-card__fog" aria-hidden="true" data-fog={JSON.stringify(studio.fog)}></div>
+          <span class="studio-card__num">{String(i + 1).padStart(2, '0')}</span>
+          <div class="studio-card__body">
+            <h3 class="studio-card__title">{studio.title}</h3>
+            <p class="studio-card__lead">{studio.lead}</p>
+            <p class="studio-card__desc">{studio.body}</p>
+            <ul class="studio-card__list">
+              {studio.points.map((point) => <li>{point}</li>)}
+            </ul>
+          </div>
+        </article>
+      ))}
+    </div>
 
     <p>
-      Got something in mind? Tell us what you need & <strong>we’ll help you build it</strong>.
+      Got something in mind? Tell us what you need &amp; <strong>we’ll help you build it</strong>.
     </p>
 
     <h2 style="margin-top: 4rem;">What We Build With</h2>
@@ -52,35 +101,35 @@ const seo = {
     <div class="stack-grid">
 
       <!-- omfg best website ever: https://devicon.dev -->
-      
+
       <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/swift/swift-original.svg" />
       <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/astro/astro-original.svg" />
       <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/django/django-plain.svg" />
       <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/spring/spring-original.svg" />
-      
+
       <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg" />
-          
-      
+
+
       <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg" />
-          
-      
+
+
       <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/firebase/firebase-original.svg" />
-          
-      
+
+
       <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original-wordmark.svg" />
-          
-      
+
+
       <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mongodb/mongodb-original-wordmark.svg" />
-          
-      
+
+
       <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/rabbitmq/rabbitmq-original.svg" />
-          
-      
+
+
       <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original-wordmark.svg" />
-          
-      
+
+
       <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/figma/figma-original.svg" />
-          
+
     </div>
 
     <p>
@@ -88,9 +137,240 @@ const seo = {
       Don’t see what you need? We’ll work with you to make it happen.
     </p>
   </TextSection>
+
+  <!-- Per-card Vanta fog: three.js r134 + vanta.fog from CDN (mirrors the home hero). -->
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script is:inline src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.fog.min.js"></script>
+  <script is:inline>
+    (function () {
+      // Shared knobs from the Vanta presets (identical across the four cards).
+      var COMMON = {
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        minHeight: 200.0,
+        minWidth: 200.0,
+        blurFactor: 0.6,
+        zoom: 1,
+        scale: 2,
+        scaleMobile: 4,
+        speed: 1,
+        backgroundAlpha: 1,
+      };
+
+      var started = false;
+      function startFogs() {
+        if (started || !window.VANTA || !window.VANTA.FOG) return;
+        started = true;
+        window.__studioFogs = [];
+        document.querySelectorAll('.studio-card__fog').forEach(function (el) {
+          var cfg = {};
+          try { cfg = JSON.parse(el.dataset.fog); } catch (e) {}
+          var opts = Object.assign({ el: el }, COMMON, {
+            highlightColor: cfg.highlight,
+            midtoneColor: cfg.midtone,
+            lowlightColor: cfg.lowlight,
+            baseColor: cfg.base,
+          });
+          try { window.__studioFogs.push(window.VANTA.FOG(opts)); } catch (e) {}
+        });
+      }
+
+      function whenReady(cb) {
+        if (window.VANTA && window.VANTA.FOG) return cb();
+        var tries = 0;
+        var t = setInterval(function () {
+          if (window.VANTA && window.VANTA.FOG) { clearInterval(t); cb(); }
+          else if (++tries > 100) { clearInterval(t); }
+        }, 50);
+      }
+
+      function init() {
+        var stack = document.querySelector('.studio-stack');
+        if (!stack) return;
+        // Lazy-start the four WebGL contexts only once the deck nears the viewport.
+        if ('IntersectionObserver' in window) {
+          var io = new IntersectionObserver(function (entries) {
+            if (entries.some(function (en) { return en.isIntersecting; })) {
+              io.disconnect();
+              whenReady(startFogs);
+            }
+          }, { rootMargin: '300px' });
+          io.observe(stack);
+        } else {
+          whenReady(startFogs);
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
 </Layout>
 
 <style>
+  /* ---------- Studios: scroll-driven stacking cards ---------- */
+  /* The stack is one tall container so each sticky card has room to pin and
+     overlap. It also carries the single view-timeline that drives the scale —
+     the container keeps scrolling while individual cards are pinned, so the
+     "burying" animation advances during the pin. */
+  .studio-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    /* Negative top pulls the deck up under the hero; it collapses against the
+       TextSection's 3rem section margin, leaving a small gap above card 01. */
+    margin: -1.5rem 0 3rem;
+    /* Trailing room so the last card can settle before the stack releases. */
+    padding-bottom: 4rem;
+  }
+
+  .studio-card {
+    position: sticky;
+    /* Sit just below the sticky site header; each deeper card peeks a little lower. */
+    top: calc(var(--header-h, 66px) + 1.25rem + var(--index) * 1.4rem);
+    display: flex;
+    gap: 1.5rem;
+    min-height: clamp(320px, 42vh, 420px);
+    padding: clamp(1.5rem, 4vw, 2.75rem);
+    border-radius: var(--theme-shape-radius, 1.5rem);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 18px 40px -22px rgba(0, 0, 0, 0.35);
+    color: #000;
+    transform-origin: top center;
+    will-change: transform;
+    /* Each card carries its own animated Vanta fog; the base color shows until
+       the canvas paints (and if WebGL is unavailable). Clip the canvas to the
+       rounded corners. */
+    background: var(--fallback, #eee);
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  /* The Vanta canvas mounts inside this layer, behind the card content. */
+  .studio-card__fog {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .studio-card__fog :global(canvas) {
+    border-radius: inherit;
+  }
+
+  /* A whisper-soft light scrim keeps the dark fog patches from eating the text. */
+  .studio-card__fog::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      rgba(255, 255, 255, 0.34) 0%,
+      rgba(255, 255, 255, 0.14) 46%,
+      rgba(255, 255, 255, 0) 72%
+    );
+  }
+
+  .studio-card__num {
+    position: relative;
+    z-index: 1;
+    flex: 0 0 auto;
+    font-family: var(--theme-font-family-sans);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    line-height: 1;
+    opacity: 0.55;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .studio-card__body {
+    position: relative;
+    z-index: 1;
+    flex: 1 1 auto;
+  }
+
+  .studio-card__title {
+    margin: 0 0 0.4rem;
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.05;
+  }
+
+  .studio-card__lead {
+    margin: 0 0 0.75rem;
+    font-weight: 600;
+    opacity: 0.85;
+  }
+
+  .studio-card__desc {
+    margin: 0 0 1.1rem;
+    max-width: 48ch;
+  }
+
+  .studio-card__list {
+    margin: 0;
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .studio-card__list li {
+    line-height: 1.45;
+  }
+
+  /* Progressive enhancement: as each card is pinned and the next one slides up
+     to cover it, the pinned card scales back and dims, like a deck of cards.
+     Each card animates over its own slice of the container's scroll timeline,
+     keyed off its index. Plain sticky stacking is the fallback where the
+     animation-timeline property isn't supported. */
+  @supports (animation-timeline: view()) {
+    .studio-stack {
+      view-timeline-name: --studio-stack;
+      view-timeline-axis: block;
+    }
+
+    .studio-card {
+      /* Bury card i across the window where card i+1 slides up over it. */
+      --bury-start: calc((var(--index) + 0.7) / var(--total) * 100%);
+      --bury-end: calc((var(--index) + 1.15) / var(--total) * 100%);
+      animation: studio-card-bury linear both;
+      animation-timeline: --studio-stack;
+      animation-range: cover var(--bury-start) cover var(--bury-end);
+    }
+
+    /* The last card is never covered, so it never recedes. */
+    .studio-card:last-child {
+      animation: none;
+    }
+
+    @keyframes studio-card-bury {
+      to {
+        transform: scale(0.9) translateY(-0.5rem);
+        filter: brightness(0.95);
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .studio-card {
+      position: static;
+      animation: none;
+    }
+    .studio-stack {
+      padding-bottom: 0;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .studio-card {
+      flex-direction: column;
+      gap: 0.5rem;
+      min-height: 0;
+    }
+  }
+
   .stack-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));

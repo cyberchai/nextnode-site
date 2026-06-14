@@ -1,22 +1,18 @@
 export const nav = [
 	{
-		title: 'Home',
-		slug: '/',
+		title: 'Studios',
+		slug: '/company/services',
 	},
 	{
 		title: 'Projects',
-		slug: '/projects/projects', // TODO: change this later
+		slug: '/projects/projects',
 	},
 	{
-		title: 'Services',
-		slug: '/company/services',  // TODO: change this later
-	},
-	{
-		title: 'About',
+		title: 'Team',
 		slug: '/company/about',
 	},
 	{
-		title: 'FAQ',
-		slug: '/company/FAQ',
+		title: 'Contact',
+		slug: '/company/contact',
 	},
 ];

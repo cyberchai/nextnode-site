@@ -1,160 +1,335 @@
 ---
-import { Icon } from 'astro-icon/components'
-const { navData, rightMenu } = Astro.props;
+const { navData } = Astro.props;
+
+// Full-screen overlay nav: Home plus the primary nav destinations.
+const overlayLinks = [{ title: 'Home', slug: '/' }, ...(navData ?? [])];
+const year = new Date().getFullYear();
 ---
 
-<script type="module">
-  const bodyElement = document.querySelector('body');
-  const menuButton = document.querySelector('#menuButton')
-  const navHeader = document.querySelector('#odysseyNavHeader');
-  const menuButtonIconHam = document.querySelector('#menuButtonIconHam');
-  const menuButtonIconClose = document.querySelector('#menuButtonIconClose');
-  let scrollPosition = 0;
-
-  menuButton.addEventListener('click', toggleMenu)
-
-  function toggleMenu() {
-    menuButtonIconHam.toggleAttribute('hidden');
-    menuButtonIconClose.toggleAttribute('hidden');
-    
-    if (navHeader.hasAttribute('mobile-menu-open', true)) {
-      menuButton.title = "Open Main Menu"
-      // unlock scroll position
-      bodyElement.style.removeProperty('overflow');
-      bodyElement.style.removeProperty('position');
-      bodyElement.style.removeProperty('top');
-      bodyElement.style.removeProperty('width');
-      window.scrollTo(0, scrollPosition);
-    } else {
-      menuButton.title = "Close Main Menu"
-      // lock scroll position
-      scrollPosition = window.pageYOffset;
-      bodyElement.style.overflow = 'hidden';
-      bodyElement.style.position = 'fixed';
-      bodyElement.style.top = `-${scrollPosition}px`;
-      bodyElement.style.width = '100%';
-    }
-    
-    navHeader.toggleAttribute('mobile-menu-open');
-  }
-</script>  
-
-<header id="odysseyNavHeader" class={`${rightMenu ? "header--right" : ``.trim()}`}>
-  <div class="header-logo-menu__container">
-  <button id="menuButton" title="Open Main Menu">
-    <span id="menuButtonIconHam">
-      <Icon name="ic:baseline-menu" width="24px" height="24px" />
-    </span>
-    <span id="menuButtonIconClose" hidden>
-      <Icon name="ic:baseline-close" width="24px" height="24px" />
-    </span>
-  </button>
-  <a class="header-logo__link" href="/">
-    <slot name="logo">
-    </slot>
+<header id="siteHeader" class="site-header">
+  <a class="brand" href="/" aria-label="NextNode Studio — home">
+    <slot name="logo" />
   </a>
-  </div>
-  <div class="header-nav__container">
-    <slot name="nav">
-      {navData && <nav>
-        <ul>
-          {navData.map(navItem => (
-            (<li><a href={navItem.slug} >{navItem.title}</a></li>)
-          ))}
-        </ul>
-      </nav>}
-    </slot>
-  </div>
-  <div class="header-action-item__container">
-    <slot name="action-item">
-    </slot>
-  </div>
+
+  <nav class="primary-nav" aria-label="Primary">
+    <ul>
+      {navData && navData.map((item) => (
+        <li><a href={item.slug}>{item.title}</a></li>
+      ))}
+    </ul>
+  </nav>
+
+  <button
+    id="menuToggle"
+    class="menu-toggle"
+    type="button"
+    aria-label="Open menu"
+    aria-expanded="false"
+    aria-controls="navOverlay"
+  >
+    <span class="mt-bar"></span>
+    <span class="mt-bar"></span>
+  </button>
 </header>
 
+<div id="navOverlay" class="nav-overlay" hidden>
+  <nav class="nov-links" aria-label="Overlay">
+    {overlayLinks.map((item) => (
+      <a href={item.slug}>{item.title}</a>
+    ))}
+  </nav>
+
+  <div class="nov-foot">
+    <div class="nov-contact">
+      <a class="nov-phone" href="tel:+13478811888">(347) 881-1888</a>
+      <a class="nov-email" href="mailto:support@nextnode.ventures">
+        <span class="nov-email__plus" aria-hidden="true">+</span>
+        <span class="nov-email__text">support@nextnode.ventures</span>
+      </a>
+    </div>
+    <div class="nov-legal">
+      <a href="/company/legal">Privacy Policy</a>
+      <a href="/company/legal">Terms of Service</a>
+    </div>
+    <p class="nov-copy">&copy; {year} NextNode Studio</p>
+  </div>
+</div>
+
+<script>
+  const body = document.body;
+  const toggle = document.getElementById('menuToggle');
+  const overlay = document.getElementById('navOverlay');
+  let scrollY = 0;
+
+  function openMenu() {
+    scrollY = window.scrollY;
+    overlay.removeAttribute('hidden');
+    // allow the element to paint before transitioning in
+    requestAnimationFrame(() => body.classList.add('menu-open'));
+    toggle.setAttribute('aria-expanded', 'true');
+    toggle.setAttribute('aria-label', 'Close menu');
+    body.style.position = 'fixed';
+    body.style.top = `-${scrollY}px`;
+    body.style.width = '100%';
+  }
+
+  function closeMenu() {
+    body.classList.remove('menu-open');
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Open menu');
+    body.style.removeProperty('position');
+    body.style.removeProperty('top');
+    body.style.removeProperty('width');
+    window.scrollTo(0, scrollY);
+    // hide after the transition so it's not focusable
+    overlay.addEventListener(
+      'transitionend',
+      () => {
+        if (!body.classList.contains('menu-open')) overlay.setAttribute('hidden', '');
+      },
+      { once: true }
+    );
+  }
+
+  toggle.addEventListener('click', () => {
+    if (body.classList.contains('menu-open')) closeMenu();
+    else openMenu();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && body.classList.contains('menu-open')) closeMenu();
+  });
+
+  // Close the menu when a link inside the overlay is followed
+  overlay.querySelectorAll('a[href]').forEach((link) => {
+    link.addEventListener('click', () => closeMenu());
+  });
+</script>
+
 <style>
-  header {
+  /* ---------- Top bar ---------- */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     width: 100%;
-    padding: 1rem 0.5rem;
+    box-sizing: border-box;
+    height: var(--header-h);
+    padding: 0 clamp(16px, 3vw, 40px);
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: clamp(16px, 4vw, 48px);
+    background: var(--theme-bg);
   }
-  header.header--right {
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-  }
-  .header-logo__link {
-    width: fit-content;
+
+  .brand {
+    display: flex;
+    align-items: center;
     color: inherit;
     text-decoration: none;
+    flex-shrink: 0;
+    z-index: 2;
   }
-  .header-logo-menu__container {
+
+  /* Nav links spread evenly across the remaining space */
+  .primary-nav {
+    flex: 1;
     display: flex;
-    align-items: center;
-    z-index: 100;
+    justify-content: center;
   }
-  .header-action-item__container {
-    z-index: 100;
-  }
-  #menuButton {
-    outline: none;
-    border: none;
-    background-color: transparent;
-    margin-right: 0.5rem;
-    display: none;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-  }
-  #menuButton > span {
-    color: var(--theme-on-bg);
-    vertical-align: middle;
-  }
-  nav {
-  display: flex;
-  }
-  nav ul {
+  .primary-nav ul {
+    list-style: none;
     margin: 0;
     padding: 0;
-    list-style: none;
+    width: 100%;
+    max-width: 720px;
     display: flex;
+    justify-content: space-between;
   }
-  nav ul li a {
+  .primary-nav a {
     text-decoration: none;
-    margin-right: 1rem;
-    color: inherit;
-    opacity: 0.72;
-    transition: opacity linear 150ms;
+    color: #000;
+    opacity: 0.85;
+    font-size: 1.05rem;
+    text-transform: uppercase;
+    transition: opacity 150ms linear;
   }
-  nav ul li a:hover {
+  .primary-nav a:hover {
     opacity: 1;
   }
-  @media(max-width: 600px) {
-    #menuButton {
-      display: block;  
-      z-index: 100;
+
+  /* Fade links out while the overlay is open */
+  :global(body.menu-open) .primary-nav {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+
+  /* ---------- Hamburger -> X ---------- */
+  .menu-toggle {
+    position: relative;
+    flex-shrink: 0;
+    width: 46px;
+    height: 46px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    z-index: 2;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mt-bar {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 28px;
+    height: 2px;
+    margin: -1px 0 0 -14px;
+    background: var(--theme-on-bg);
+    transition: transform 0.4s cubic-bezier(0.7, 0, 0.2, 1);
+  }
+  .mt-bar:nth-child(1) { transform: translateY(-5px); }
+  .mt-bar:nth-child(2) { transform: translateY(5px); }
+  :global(body.menu-open) .mt-bar:nth-child(1) { transform: translateY(0) rotate(45deg); }
+  :global(body.menu-open) .mt-bar:nth-child(2) { transform: translateY(0) rotate(-45deg); }
+
+  /* ---------- Overlay (centered nav) ---------- */
+  .nav-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+    box-sizing: border-box;
+    padding: calc(var(--header-h, 66px) + clamp(8px, 3vh, 32px)) clamp(20px, 4vw, 64px) clamp(28px, 4vh, 48px);
+    background: var(--theme-bg);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transform: translateY(-12px);
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.35s ease, transform 0.35s ease, visibility 0s linear 0.35s;
+  }
+  :global(body.menu-open) .nav-overlay {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+
+  /* Centered link stack */
+  .nov-links {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(2px, 0.6vh, 12px);
+  }
+  .nov-links a {
+    font-family: var(--theme-font-family-sans);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.04;
+    font-size: clamp(2.6rem, 8vw, 6rem);
+    color: var(--theme-on-bg);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .nov-links a:hover {
+    color: #0096ff; /* home hero landing blue */
+  }
+
+  /* Footer row */
+  .nov-foot {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: end;
+    gap: clamp(16px, 3vw, 40px);
+    margin-top: clamp(24px, 4vh, 48px);
+  }
+  .nov-contact {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .nov-phone {
+    color: var(--theme-on-bg);
+    text-decoration: none;
+    font-size: clamp(1rem, 1.4vw, 1.15rem);
+  }
+  .nov-email {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--theme-on-bg);
+    text-decoration: none;
+    font-size: clamp(1.05rem, 1.8vw, 1.5rem);
+    font-weight: 700;
+  }
+  .nov-email__plus {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    line-height: 1;
+  }
+  .nov-email__text {
+    border-bottom: 1.5px solid currentColor;
+    padding-bottom: 3px;
+  }
+  .nov-legal {
+    display: flex;
+    justify-content: center;
+    gap: clamp(20px, 3vw, 48px);
+  }
+  .nov-legal a {
+    color: var(--theme-on-bg);
+    text-decoration: none;
+    font-size: 1rem;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+  }
+  .nov-legal a:hover {
+    opacity: 1;
+  }
+  .nov-copy {
+    margin: 0;
+    justify-self: end;
+    color: var(--theme-on-bg);
+    opacity: 0.5;
+    font-size: 0.95rem;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 820px) {
+    .primary-nav { display: none; }
+  }
+  @media (max-width: 720px) {
+    .nov-foot {
+      grid-template-columns: 1fr;
+      align-items: start;
+      gap: 20px;
     }
-    .header-nav__container {
-      width: 100%;
-      height: 100%;
-      background-color: var(--theme-bg);
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      position: fixed;
-      inset: 0;
-      z-index: 99;
+    .nov-legal {
+      justify-content: flex-start;
     }
-    header[mobile-menu-open] .header-nav__container {
-      display: flex;
+    .nov-copy {
+      justify-self: start;
     }
-    header[mobile-menu-open] nav ul {
-      align-items: center;
-      flex-direction: column;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mt-bar,
+    .nav-overlay {
+      transition-duration: 0.01ms;
     }
-     header[mobile-menu-open] nav ul li {
-       font-size: var(--font-size-lg);
-       margin-bottom: 1rem;
-     }
   }
 </style>

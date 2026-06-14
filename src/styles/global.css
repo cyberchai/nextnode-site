@@ -1,7 +1,11 @@
-html,
-body {
+html {
 	height: 100%;
 }
+
+/* Body must be allowed to grow with content (it keeps `min-height: 100vh` from
+   reset.css). A fixed `height: 100%` here clamps it to one viewport, which caps
+   the stick range of any `position: sticky` child — e.g. the site header would
+   scroll away past the first screenful on tall pages. */
 
 body {
 	max-width: 1920px;

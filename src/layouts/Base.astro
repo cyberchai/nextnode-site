@@ -2,6 +2,8 @@
 import { SkipLink } from '@components/odyssey-theme';
 import BaseHead from '../components/head/BaseHead.astro';
 import type { Props as BaseHeadProps } from '../components/head/BaseHead.astro';
+import CustomCursor from '../components/core/CustomCursor.astro';
+import ScrollAnimations from '../components/core/ScrollAnimations.astro';
 
 export interface Props {
 	seo?: BaseHeadProps;
@@ -24,8 +26,10 @@ const { seo } = Astro.props;
 		</script>
 
 		<BaseHead {...seo} />
+		<ScrollAnimations />
 	</head>
 	<body>
+		<CustomCursor />
 		<SkipLink />
     <slot name="announcement-bar" />
 		<slot name="header" />

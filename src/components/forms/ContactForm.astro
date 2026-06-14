@@ -1,39 +1,161 @@
 ---
-import { Button, FormInput, FormSelect, FormTextarea } from '@components/odyssey-theme';
-
-const selectOptions = [
-  "Google Search",
-  "Social Media",
-  "Referral",
-  "Poster",
-]
-
+// Clean, minimal contact form — posts directly to Formspree.
 ---
-<!-- using formspree -->
-<!-- <form name="Contact Form" method="POST" action="/contact-thank-you">
-  <FormInput type="text" label="Name" name="Name" placeholder="Jane Doe" />
-  <FormInput type="email" label="Email" name="Email" placeholder="hello@example.com" />
-  <FormSelect label="How Did You Hear About Us?" options={selectOptions} />
-  <FormTextarea label="Message" name="Message" placeholder="Your message here..." />
-  <Button>Submit</Button>
-</form> -->
 
-<form action="https://formspree.io/f/mwpqeglg" method="POST">
-  {/* Honeypot field to prevent spam bots */}
-  <input type="text" name="_gotcha" style={{ display: 'none' }} />
+<form class="contact-form" action="https://formspree.io/f/mwpqeglg" method="POST">
+  {/* Honeypot field to deter spam bots */}
+  <input type="text" name="_gotcha" class="contact-form__hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
-  <FormInput type="text" label="Name" name="name" placeholder="Jane Doe" required />
-  <FormInput type="email" label="Email" name="email" placeholder="hello@example.com" required />
-  <FormSelect label="How Did You Hear About Us?" name="referral" options={selectOptions} />
-  <FormTextarea label="Message" name="message" placeholder="Your message here..." required />
-  <Button type="submit">Send</Button>
+  <div class="contact-form__field">
+    <label class="sr-only" for="name">Your name</label>
+    <input id="name" type="text" name="name" placeholder="Your name *" required />
+  </div>
+
+  <div class="contact-form__field">
+    <label class="sr-only" for="email">Email</label>
+    <input id="email" type="email" name="email" placeholder="Email *" required />
+  </div>
+
+  <div class="contact-form__field">
+    <label class="sr-only" for="message">Your message</label>
+    <textarea id="message" name="message" placeholder="Your message" rows="5"></textarea>
+  </div>
+
+  <p class="contact-form__error" role="alert" hidden>Something went wrong. Please try again or email us directly.</p>
+
+  <button type="submit">Send message</button>
 </form>
 
+<div class="contact-form__thanks" role="status" hidden>
+  <h2>Thanks for reaching out.</h2>
+  <p>We've got your message and will get back to you shortly.</p>
+</div>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('.contact-form');
+  const thanks = document.querySelector('.contact-form__thanks');
+  const error = form?.querySelector('.contact-form__error');
+  const submitBtn = form?.querySelector('button[type="submit"]');
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    error?.setAttribute('hidden', '');
+    submitBtn?.setAttribute('disabled', '');
+
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { Accept: 'application/json' },
+      });
+
+      if (res.ok) {
+        form.setAttribute('hidden', '');
+        thanks?.removeAttribute('hidden');
+        thanks?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      } else {
+        error?.removeAttribute('hidden');
+        submitBtn?.removeAttribute('disabled');
+      }
+    } catch {
+      error?.removeAttribute('hidden');
+      submitBtn?.removeAttribute('disabled');
+    }
+  });
+</script>
 
 <style>
-  form {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .contact-form__hp {
+    display: none;
+  }
+
+  .contact-form input,
+  .contact-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.18);
+    background: transparent;
+    padding: 1.25rem 0;
+    font-family: inherit;
+    font-size: clamp(1.05rem, 1.6vw, 1.35rem);
+    color: var(--theme-on-bg);
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+
+  .contact-form textarea {
+    resize: vertical;
+    min-height: 8rem;
+    line-height: 1.5;
+  }
+
+  .contact-form input::placeholder,
+  .contact-form textarea::placeholder {
+    color: rgba(0, 0, 0, 0.4);
+  }
+
+  .contact-form input:focus,
+  .contact-form textarea:focus {
+    border-bottom-color: var(--theme-on-bg);
+  }
+
+  .contact-form button {
+    align-self: flex-start;
+    margin-top: 1.75rem;
+    background: var(--theme-primary);
+    color: var(--theme-on-primary);
+    border: none;
+    border-radius: var(--theme-button-border-radius);
+    padding: 0.85rem 2.4rem;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .contact-form button:hover {
+    background: var(--theme-primary-hover);
+  }
+
+  .contact-form button:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  .contact-form__error {
+    margin: 0.5rem 0 0;
+    color: #c0392b;
+    font-size: 0.95rem;
+  }
+
+  .contact-form__thanks h2 {
+    margin: 0 0 0.5rem;
+  }
+
+  .contact-form__thanks p {
+    margin: 0;
+    color: var(--theme-on-bg);
+    opacity: 0.7;
+  }
+
+  /* Visually hidden but available to screen readers */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 </style>

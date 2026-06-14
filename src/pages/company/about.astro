@@ -1,60 +1,191 @@
 ---
-import { TextSection } from '@components/odyssey-theme';
+import { Container, Button, TextCardSection } from '@components/odyssey-theme';
+import { Icon } from 'astro-icon/components';
 import Layout from '../../layouts/Page.astro';
-import HeroSection from '../../components/sections/heros/HeroSection.astro';
 
 const seo = {
 	title: 'About | NextNode Studio',
-	description: 'Who we are, what we care about, and why we build.',
+	description: 'Who we are, what we care about, and why we build. A woman-owned, BIPOC-led studio based in New York City.',
 };
 ---
 
 <Layout {seo}>
-	<HeroSection>
-		<div slot="text-container">
-			<h1>Meet NextNode Studio</h1>
-			<p>
-				NextNode Studio is proudly <strong>woman-owned</strong> and <strong>BIPOC-led</strong>.
-			</p>
+	<section class="about-hero">
+		<div class="about-hero__bg">
+			<img
+				class="about-hero__img"
+				src="/assets/images/home/nyc-skyline.jpg"
+				alt="The New York City skyline at dusk, with the Empire State Building at center"
+			/>
+			<div class="about-hero__scrim"></div>
+			<div class="about-hero__content">
+				<div class="about-hero__text">
+					<h1 class="about-hero__title">Meet NextNode Studio</h1>
+					<p class="about-hero__tagline">
+						A creative engineering studio for cafés, campaigns, artists, founders, and the communities behind them.
+					</p>
+				</div>
+			</div>
 		</div>
-    <picture slot="image-container">
-      <img
-        src="/assets/images/home/gears.jpg"
-        alt="NextNode Studio team"
-        id="home-hero-image"
-      />
-    </picture>
-	</HeroSection>
+	</section>
 
-  <TextSection narrow>
-    <p>
-      What started as a side hustle became a full-time mission: to design secure, purposeful, and good-looking tech that serves people and communities.
-    </p>
+	<Container narrow>
+		<section class="about__section">
+			<h2>Who We Are</h2>
+			<p>
+				What started as a side hustle became a mission: to design secure, purposeful, and good-looking tech that serves people and communities.
+			</p>
 
-    <p>
-      We’ve been active for <strong>3 years</strong>, with over <strong>7 years of development experience</strong> and a <strong>Computer Science degree</strong> behind our code. Our background includes startups, nonprofits, and global organizations, and we bring that range into every project.
-    </p>
+			<p>
+				Led by <a class="about__link" href="https://www.linkedin.com/in/chaira-harder" target="_blank" rel="noopener noreferrer">Chaira Harder</a>, we’ve been active for <strong>4 years</strong> with over <strong>8 years of development experience</strong> behind our code. Our background includes startups, nonprofits, and global organizations, and we bring that range into every project.
+			</p>
 
-    <p>
-      What sets us apart? We keep things simple in the best way. Clear, thoughtful design. Smart security. And tech that feels built just for the people using it, because it is.
-    </p>
+			<p>
+				What sets us apart? We keep things simple in the best way. Clear, thoughtful design. Smart security. And tech that feels built just for the people using it, because it is.
+			</p>
 
-    <p>
-      Our values are simple: <strong>Transparency</strong> in how we work. <strong>Community</strong> in how we collaborate. And a deep belief in helping everyone grow.
-    </p>
+			<p>
+				Our values are simple: <strong>Transparency</strong> in how we work. <strong>Community</strong> in how we collaborate. And a deep belief in helping everyone grow.
+			</p>
 
-    <p>
-      From iOS apps to full-stack builds, from solo creatives to mission-driven orgs, we’re committed to helping great ideas progress.
-    </p>
+			<p>
+				From iOS apps to full-stack builds, from solo creatives to mission-driven orgs, we’re committed to helping great ideas progress across New York City and beyond.
+			</p>
+		</section>
 
-    <br>
-    <h2>Our Commitment</h2>
-		<p>
-			<strong>Tech should be useful and meaningful.</strong> We aim to take on at least one social-impact project each year at a reduced or pro bono rate. We also actively connect founders and creators in our network to help support more shared growth across communities.
-		</p>
+		<figure class="about__media">
+			<img
+				src="/chairaharder.JPG"
+				alt="A NextNode Studio team member presenting from a laptop at a podium on stage"
+				loading="lazy"
+			/>
+		</figure>
 
-		<p>
-			<i>4%</i> of our profit goes to causes including <i>education access, community equity, and housing insecurity</i> in our local New England communities by partnering with grassroots organizations and volunteering our time and skills on project-based work.
-		</p>
-  </TextSection>
+		<section class="about__section">
+			<h2>Our Commitment</h2>
+			<p>
+				<strong>Tech should be useful and meaningful.</strong> We aim to take on at least one social-impact project each year at a reduced or pro bono rate. We also actively connect founders and creators in our network to help support more shared growth across communities.
+			</p>
+
+			<p>
+				<i>4%</i> of our profit goes to causes including <i>education access, community equity, and housing insecurity</i> in our local New York City communities by partnering with grassroots organizations and volunteering our time and skills on project-based work.
+			</p>
+		</section>
+	</Container>
+
+	<TextCardSection>
+		<h2>Want to build with us?</h2>
+		<p>Tell us about your project and let’s make it real.</p>
+		<div class="cta-buttons__container">
+			<Button
+				href="/company/contact"
+				outlined
+				customIcon
+			>
+				Get in Touch
+				<Fragment slot="icon">
+					<Icon name="ic:baseline-launch" />
+				</Fragment>
+			</Button>
+		</div>
+	</TextCardSection>
 </Layout>
+
+<style>
+	/* Full-width rounded hero panel — mirrors the home page's landing area,
+	   with the NYC skyline as the background and the intro text on top. */
+	.about-hero {
+		--hero-top: 0px;
+		--bottom-gap: clamp(6px, 0.7vw, 10px);
+		max-width: var(--container-max-width);
+		margin: 0 auto;
+		padding: var(--hero-top) 1rem var(--bottom-gap);
+	}
+	.about-hero__bg {
+		position: relative;
+		overflow: hidden;
+		width: 100%;
+		height: calc(100vh - var(--header-h) - var(--hero-top) - var(--bottom-gap));
+		height: calc(100dvh - var(--header-h) - var(--hero-top) - var(--bottom-gap));
+		border-radius: clamp(22px, 2.4vw, 38px);
+		background: #e8e1ff;
+		container-type: inline-size;
+	}
+	.about-hero__img {
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+	/* Lighten the left side so the dark text stays legible over the skyline,
+	   fading to clear on the right to keep the city in view. */
+	.about-hero__scrim {
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		background: linear-gradient(
+			100deg,
+			rgba(255, 255, 255, 0.9) 0%,
+			rgba(255, 255, 255, 0.55) 32%,
+			rgba(255, 255, 255, 0) 62%
+		);
+	}
+	.about-hero__content {
+		position: relative;
+		z-index: 2;
+		box-sizing: border-box;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		padding: clamp(1.5rem, 5vw, 4rem);
+	}
+	.about-hero__text {
+		max-width: 34rem;
+	}
+	.about-hero__title {
+		margin: 0;
+		font-family: var(--theme-font-family-sans);
+		font-weight: 700;
+		letter-spacing: -0.03em;
+		line-height: 0.95;
+		color: #000;
+		font-size: clamp(2.75rem, 9cqw, 5.5rem);
+	}
+	.about-hero__tagline {
+		margin: 1.25rem 0 0;
+		max-width: 32ch;
+		font-family: var(--theme-font-family-sans);
+		font-weight: 500;
+		line-height: 1.2;
+		letter-spacing: -0.01em;
+		color: #0b0b0b;
+		font-size: clamp(1.1rem, 3cqw, 1.6rem);
+	}
+
+	.about__section {
+		margin: var(--section-margin) auto;
+	}
+	.about__media {
+		margin: var(--section-margin) auto;
+	}
+	.about__media img {
+		display: block;
+		width: 100%;
+		max-height: 70vh;
+		object-fit: cover;
+		border-radius: var(--theme-shape-radius);
+	}
+	.about__section :is(p) {
+		margin-bottom: 1.25rem;
+	}
+	.about__link {
+		text-decoration: none;
+	}
+	.cta-buttons__container {
+		display: flex;
+		flex-wrap: wrap;
+	}
+</style>

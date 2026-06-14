@@ -1,0 +1,372 @@
+---
+/**
+ * CustomCursor — "Filled + Magnetic"
+ * A premium custom cursor inspired by https://sustainability.terrahq.com/
+ *
+ * - A solid filled blob that smoothly trails the pointer (lerp easing).
+ * - A precise inner dot that tracks the pointer 1:1 (for accuracy).
+ * - Magnetism: over interactive elements the blob is pulled toward the
+ *   element's centre so it "snaps" onto buttons / links.
+ * - The blob grows over interactive elements and can show a label.
+ * - Uses mix-blend-mode: difference so it inverts against any background.
+ *
+ * Per-element hooks:
+ *   data-cursor="magnetic"     -> the element itself drifts toward the pointer
+ *   data-cursor="hidden"       -> hide the cursor over this element
+ *   data-cursor-text="View"    -> show a label inside an enlarged blob
+ *
+ * Disabled on touch / coarse pointers; honours prefers-reduced-motion.
+ */
+---
+
+<div id="cursor-root" aria-hidden="true">
+	<div class="cursor-trail-layer"></div>
+	<div class="cursor-blob">
+		<span class="cursor-label"></span>
+	</div>
+	<div class="cursor-dot"></div>
+</div>
+
+<style is:global>
+	/* Only take over the cursor on devices with a real, fine pointer. */
+	@media (hover: hover) and (pointer: fine) {
+		html.has-custom-cursor,
+		html.has-custom-cursor * {
+			cursor: none !important;
+		}
+	}
+
+	#cursor-root {
+		display: none;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		html.has-custom-cursor #cursor-root {
+			display: block;
+		}
+	}
+
+	.cursor-blob,
+	.cursor-dot,
+	.cursor-trail {
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 99999;
+		pointer-events: none;
+		border-radius: 999px;
+		mix-blend-mode: difference;
+		will-change: transform;
+		/* Position is driven by JS via translate3d; -50% offsets centre it. */
+	}
+
+	/* The follow-path: a wrapper we fade in/out with pointer speed (set in JS),
+	   so it only shows while moving and never smudges the resting dot grey. */
+	.cursor-trail-layer {
+		opacity: var(--trail-opacity, 0);
+		transition: opacity 0.2s ease;
+	}
+
+	.cursor-trail {
+		background: #fff;
+		/* size + opacity are set per-node in JS */
+	}
+
+	.cursor-blob {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 14px;
+		height: 14px;
+		margin: -7px 0 0 -7px;
+		background: #fff;
+		transition:
+			width 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+			height 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+			margin 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+			padding 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+			background-color 0.3s ease,
+			opacity 0.3s ease;
+	}
+
+	.cursor-dot {
+		width: 5px;
+		height: 5px;
+		margin: -2.5px 0 0 -2.5px;
+		background: #fff;
+		transition:
+			width 0.2s ease,
+			height 0.2s ease,
+			margin 0.2s ease,
+			opacity 0.2s ease;
+	}
+
+	.cursor-label {
+		font-family: var(--theme-font-family-sans, sans-serif);
+		font-size: 0.72rem;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: #000;
+		opacity: 0;
+		transform: scale(0.5);
+		transition:
+			opacity 0.22s ease,
+			transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+		white-space: nowrap;
+		user-select: none;
+	}
+
+	/* Pressed — quick squeeze of the blob. */
+	#cursor-root.is-down .cursor-blob {
+		width: 10px;
+		height: 10px;
+		margin: -5px 0 0 -5px;
+	}
+
+	/* Hovering an interactive element — blob fills out into a soft disc. */
+	#cursor-root.is-hover .cursor-blob {
+		width: 60px;
+		height: 60px;
+		margin: -30px 0 0 -30px;
+		background: #fff;
+	}
+
+	#cursor-root.is-hover .cursor-dot {
+		opacity: 0;
+	}
+
+	/* Hovering an element with a label — blob becomes a filled pill. */
+	#cursor-root.has-label .cursor-blob {
+		width: auto;
+		height: auto;
+		margin: 0;
+		padding: 0.85rem 1.25rem;
+		transform: translate(-50%, -50%);
+		background: #fff;
+	}
+
+	#cursor-root.has-label .cursor-label {
+		opacity: 1;
+		transform: scale(1);
+	}
+
+	#cursor-root.has-label .cursor-dot {
+		opacity: 0;
+	}
+
+	/* The trail is only for free movement — hide it when the blob takes over. */
+	#cursor-root.is-hover .cursor-trail-layer,
+	#cursor-root.has-label .cursor-trail-layer,
+	#cursor-root.is-hidden .cursor-trail-layer {
+		opacity: 0;
+	}
+
+	/* Fade the whole cursor away (off-screen / explicitly hidden). */
+	#cursor-root.is-hidden .cursor-blob,
+	#cursor-root.is-hidden .cursor-dot {
+		opacity: 0;
+	}
+</style>
+
+<script>
+	const reduceMotion = window.matchMedia(
+		'(prefers-reduced-motion: reduce)',
+	).matches;
+	const finePointer = window.matchMedia(
+		'(hover: hover) and (pointer: fine)',
+	).matches;
+
+	if (finePointer) {
+		document.documentElement.classList.add('has-custom-cursor');
+
+		const root = document.getElementById('cursor-root');
+		const blob = root?.querySelector('.cursor-blob') as HTMLElement | null;
+		const dot = root?.querySelector('.cursor-dot') as HTMLElement | null;
+		const label = root?.querySelector('.cursor-label') as HTMLElement | null;
+		const trailLayer = root?.querySelector(
+			'.cursor-trail-layer',
+		) as HTMLElement | null;
+
+		if (root && blob && dot && label && trailLayer) {
+			// True pointer position.
+			let mouseX = window.innerWidth / 2;
+			let mouseY = window.innerHeight / 2;
+			// Smoothed blob position.
+			let blobX = mouseX;
+			let blobY = mouseY;
+			// Previous pointer position, for the speed-driven trail fade.
+			let prevMouseX = mouseX;
+			let prevMouseY = mouseY;
+			let visible = false;
+
+			// The interactive element currently under the pointer (for magnetism).
+			let activeEl: HTMLElement | null = null;
+			// An opt-in element being physically tugged toward the pointer.
+			let magneticEl: HTMLElement | null = null;
+			let hasLabel = false;
+
+			const interactiveSelector =
+				'a, button, input, textarea, select, label, summary, [role="button"], [data-cursor], [data-cursor-text]';
+
+			// How strongly the blob is pulled toward a hovered element's centre.
+			const CURSOR_PULL = reduceMotion ? 0 : 0.32;
+			// How far an opt-in magnetic element drifts toward the pointer.
+			const ELEMENT_PULL = 0.28;
+			const ease = reduceMotion ? 1 : 0.2;
+
+			const setPos = (el: HTMLElement, x: number, y: number) => {
+				el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+			};
+
+			// Build a short chain of trail dots that streak out behind motion
+			// and collapse back onto the pointer when still. Skipped when the
+			// user prefers reduced motion.
+			const TRAIL_COUNT = reduceMotion ? 0 : 5;
+			const trail: { el: HTMLElement; x: number; y: number }[] = [];
+			for (let i = 0; i < TRAIL_COUNT; i++) {
+				const el = document.createElement('div');
+				el.className = 'cursor-trail';
+				const t = i / TRAIL_COUNT; // 0 -> nearest pointer, 1 -> tail
+				const size = 7 - t * 5; // 7px down to ~2px
+				el.style.width = `${size}px`;
+				el.style.height = `${size}px`;
+				el.style.margin = `${-size / 2}px 0 0 ${-size / 2}px`;
+				el.style.opacity = `${0.5 * (1 - t)}`;
+				trailLayer.appendChild(el);
+				trail.push({ el, x: mouseX, y: mouseY });
+			}
+
+			const render = () => {
+				let targetX = mouseX;
+				let targetY = mouseY;
+
+				if (activeEl) {
+					const r = activeEl.getBoundingClientRect();
+					const cx = r.left + r.width / 2;
+					const cy = r.top + r.height / 2;
+					// Pull the blob toward the element centre — the "magnet".
+					targetX = mouseX + (cx - mouseX) * CURSOR_PULL;
+					targetY = mouseY + (cy - mouseY) * CURSOR_PULL;
+
+					// Optionally drift the element itself toward the pointer.
+					if (magneticEl === activeEl && !reduceMotion) {
+						const dx = (mouseX - cx) * ELEMENT_PULL;
+						const dy = (mouseY - cy) * ELEMENT_PULL;
+						magneticEl.style.transform = `translate(${dx}px, ${dy}px)`;
+					}
+				}
+
+				blobX += (targetX - blobX) * ease;
+				blobY += (targetY - blobY) * ease;
+
+				// Fade the trail in with pointer speed, out when at rest — so the
+				// resting cursor is a clean white dot, not a grey smudge.
+				const sdx = mouseX - prevMouseX;
+				const sdy = mouseY - prevMouseY;
+				prevMouseX = mouseX;
+				prevMouseY = mouseY;
+				const speed = Math.sqrt(sdx * sdx + sdy * sdy);
+				trailLayer.style.setProperty(
+					'--trail-opacity',
+					Math.min(1, speed / 5).toFixed(3),
+				);
+
+				// Trail: each dot chases the one ahead of it (head chases the
+				// pointer). Tighter easing keeps the path short and "slight".
+				let leadX = mouseX;
+				let leadY = mouseY;
+				for (let i = 0; i < trail.length; i++) {
+					const node = trail[i];
+					node.x += (leadX - node.x) * 0.42;
+					node.y += (leadY - node.y) * 0.42;
+					setPos(node.el, node.x, node.y);
+					leadX = node.x;
+					leadY = node.y;
+				}
+
+				// Label/pill mode centres via its own translate(-50%,-50%).
+				if (hasLabel) {
+					blob.style.transform = `translate3d(${blobX}px, ${blobY}px, 0) translate(-50%, -50%)`;
+				} else {
+					setPos(blob, blobX, blobY);
+				}
+				setPos(dot, mouseX, mouseY);
+				requestAnimationFrame(render);
+			};
+			requestAnimationFrame(render);
+
+			const clearMagnet = () => {
+				if (magneticEl) {
+					magneticEl.style.transform = '';
+					magneticEl = null;
+				}
+			};
+
+			window.addEventListener(
+				'mousemove',
+				(e) => {
+					mouseX = e.clientX;
+					mouseY = e.clientY;
+					if (!visible) {
+						visible = true;
+						root.classList.remove('is-hidden');
+					}
+
+					const target = (e.target as HTMLElement)?.closest(
+						interactiveSelector,
+					) as HTMLElement | null;
+
+					// Left the previous element — reset any physical magnetism.
+					if (target !== activeEl) clearMagnet();
+					activeEl = target;
+
+					if (!target) {
+						root.classList.remove('is-hover', 'has-label');
+						hasLabel = false;
+						label.textContent = '';
+						return;
+					}
+
+					const mode = target.getAttribute('data-cursor');
+					if (mode === 'hidden') {
+						root.classList.add('is-hidden');
+						root.classList.remove('is-hover', 'has-label');
+						hasLabel = false;
+						return;
+					}
+					if (mode === 'magnetic') magneticEl = target;
+
+					const text = target.getAttribute('data-cursor-text');
+					if (text) {
+						label.textContent = text;
+						hasLabel = true;
+						root.classList.add('has-label');
+						root.classList.remove('is-hover');
+					} else {
+						label.textContent = '';
+						hasLabel = false;
+						root.classList.add('is-hover');
+						root.classList.remove('has-label');
+					}
+				},
+				{ passive: true },
+			);
+
+			window.addEventListener('mousedown', () =>
+				root.classList.add('is-down'),
+			);
+			window.addEventListener('mouseup', () =>
+				root.classList.remove('is-down'),
+			);
+
+			document.addEventListener('mouseleave', () => {
+				root.classList.add('is-hidden');
+				clearMagnet();
+			});
+			document.addEventListener('mouseenter', () =>
+				root.classList.remove('is-hidden'),
+			);
+		}
+	}
+</script>

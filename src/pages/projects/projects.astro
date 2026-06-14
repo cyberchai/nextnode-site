@@ -5,7 +5,10 @@ import { Icon } from 'astro-icon/components';
 import ProjectCard from '../../components/cards/ProjectCard.astro';
 
 const posts = await Astro.glob('./project-posts/*.mdx').then((projects) =>
-  projects.map(({ frontmatter, url }) => ({
+  projects
+    // Temporarily hidden: Jensen Woodworking. Remove this filter to re-enable.
+    .filter(({ url }) => !url?.includes('jensen-woodworking'))
+    .map(({ frontmatter, url }) => ({
     title: frontmatter.title,
     description: frontmatter.description,
     company: frontmatter.company,
