@@ -38,7 +38,7 @@ export const footerSocials = [
   },
   {
     name: 'Email',
-    url: 'mailto:support@nextnode.ventures',
+    url: 'mailto:nextnode@asaply.ai',
     icon: 'mdi:email-outline',
   },
 ];
